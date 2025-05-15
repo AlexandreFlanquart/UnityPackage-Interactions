@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using MyUnityPackage.Toolkit;
 
-namespace Prismify_Interaction
+namespace MyUnityPackage.Interactions
 {
     public class InteractionTypeTrigger : AInteractionType
 {
