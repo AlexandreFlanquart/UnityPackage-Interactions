@@ -10,7 +10,14 @@
   },
   "contributors": [
     {
-    "name": "Victor Simon"
+      "name": "Victor Simon"
+    }
+  ],
+  "samples": [
+    {
+      "displayName": "SampleScene",
+      "description": "SampleScene",
+      "path": "Samples~"
     }
   ]
 }
