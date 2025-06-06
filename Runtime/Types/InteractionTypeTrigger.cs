@@ -6,47 +6,47 @@ using MyUnityPackage.Toolkit;
 namespace MyUnityPackage.Interactions
 {
     public class InteractionTypeTrigger : AInteractionType
-{
-    public override event Action onEnter;
-    public override event Action onExit;
-    public override event Action onInteract;
-    [SerializeField] private LayerMask layerMask;
-    [SerializeField] private bool waitingForInput = false;
-
-    private InputManager inputManager;
-    private Action interactAction;
-
-    void Start()
     {
-        inputManager = ServiceLocator.GetService<InputManager>();
-        interactAction = () => onInteract?.Invoke();
-    }
+        public override event Action onEnter;
+        public override event Action onExit;
+        public override event Action onInteract;
+        [SerializeField] private LayerMask layerMask;
+        [SerializeField] private bool waitingForInput = false;
 
-    void OnDisable()
-    {
-        inputManager.OnPressInteract -= interactAction;
-    }
+        private InputManager inputManager;
+        private Action interactAction;
 
-    void OnTriggerEnter(Collider other)
-    {
-        if(layerMask != (layerMask | (1 << other.gameObject.layer))) return;
-
-        if(!waitingForInput)
+        void Start()
         {
-            onInteract?.Invoke();
+            inputManager = ServiceLocator.GetService<InputManager>();
+            interactAction = () => onInteract?.Invoke();
         }
-        else
-        {
-            onEnter?.Invoke();
-            inputManager.OnPressInteract += interactAction;
-        }
-    }
 
-    void OnTriggerExit(Collider other)
-    {
-        if(layerMask != (layerMask | (1 << other.gameObject.layer))) return;
-        onExit?.Invoke();
-        StopAllCoroutines();
+        void OnDisable()
+        {
+            inputManager.OnPressInteract -= interactAction;
+        }
+
+        void OnTriggerEnter(Collider other)
+        {
+            if (layerMask != (layerMask | (1 << other.gameObject.layer))) return;
+
+            if (!waitingForInput)
+            {
+                onInteract?.Invoke();
+            }
+            else
+            {
+                onEnter?.Invoke();
+                inputManager.OnPressInteract += interactAction;
+            }
+        }
+
+        void OnTriggerExit(Collider other)
+        {
+            if (layerMask != (layerMask | (1 << other.gameObject.layer))) return;
+            onExit?.Invoke();
+            StopAllCoroutines();
             inputManager.OnPressInteract -= interactAction;
         }
 

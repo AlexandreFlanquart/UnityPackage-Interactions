@@ -24,14 +24,16 @@ public class RangeHandler : MonoBehaviour
 
     }
 
-    void OnEnable() {
+    void OnEnable()
+    {
         if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto)
         {
             RegisterToRangeChecker();
         }
     }
 
-    void OnDisable() {
+    void OnDisable()
+    {
         if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto)
         {
             UnregisterFromRangeChecker();
@@ -65,7 +67,7 @@ public class RangeHandler : MonoBehaviour
     public void SetInRange(bool pIsInRange)
     {
         if (inRange == pIsInRange) return;
-        
+
         inRange = pIsInRange;
         if (inRange)
         {
@@ -78,7 +80,7 @@ public class RangeHandler : MonoBehaviour
             onRangeExit?.Invoke();
         }
     }
-    
+
     #region Utility
 #if UNITY_EDITOR
     private Color gizmoColor = Color.cyan; // Couleur du Gizmo

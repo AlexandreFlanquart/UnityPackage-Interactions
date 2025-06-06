@@ -2,7 +2,8 @@
     "name": "MyUnityPackage.Interactions",
     "rootNamespace": "",
     "references": [
-        "GUID:b54b67bb94f21ea4aa2feee402050eb2"
+        "GUID:b54b67bb94f21ea4aa2feee402050eb2",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -14,7 +14,7 @@ public abstract class AInteractable : MonoBehaviour
     protected event Action onEnter;
     protected event Action onExit;
     protected event Action onInteract;
-    
+
     private bool isActive = false;
 
     private enum ActivationType { OnStart, Manual }
@@ -23,14 +23,14 @@ public abstract class AInteractable : MonoBehaviour
     {
         get
         {
-            for(int i = 0; i < conditions.Length; i++)
+            for (int i = 0; i < conditions.Length; i++)
             {
-                if(!conditions[i].CheckCondition()) return false;
+                if (!conditions[i].CheckCondition()) return false;
             }
             return true;
         }
     }
-        
+
     protected abstract void Init();
 
     protected virtual void Start()
@@ -45,8 +45,9 @@ public abstract class AInteractable : MonoBehaviour
 
     public void OnInteract()
     {
-        if(!isActive || !CanInteract) return;
-        for(int i = 0; i < effects.Length; i++)
+        Debug.Log("OnInteract Interactable" + isActive + ": " + CanInteract);
+        if (!isActive || !CanInteract) return;
+        for (int i = 0; i < effects.Length; i++)
         {
             effects[i].OnInteract();
         }
@@ -56,8 +57,9 @@ public abstract class AInteractable : MonoBehaviour
 
     public void OnEnter()
     {
-        if(!isActive || !CanInteract) return;
-        for(int i = 0; i < effects.Length; i++)
+        Debug.Log("OnEnter Interactable" + isActive + ": " + CanInteract);
+        if (!isActive || !CanInteract) return;
+        for (int i = 0; i < effects.Length; i++)
         {
             effects[i].OnEnter();
         }
@@ -66,8 +68,9 @@ public abstract class AInteractable : MonoBehaviour
 
     public void OnExit()
     {
-        if(!isActive || !CanInteract) return;
-        for(int i = 0; i < effects.Length; i++)
+        Debug.Log("OnExit Interactable" + isActive + ": " + CanInteract);
+        if (!isActive || !CanInteract) return;
+        for (int i = 0; i < effects.Length; i++)
         {
             effects[i].OnExit();
         }
@@ -76,7 +79,7 @@ public abstract class AInteractable : MonoBehaviour
 
     protected void EndInteraction()
     {
-        if(!once) Active(true);
+        if (!once) Active(true);
     }
 
     public virtual void Active(bool pActive)

@@ -18,7 +18,8 @@ public class InteractionTypeTrigger2D : AInteractionType
     void Start()
     {
         inputManager = ServiceLocator.GetService<InputManager>();
-        interactAction = () =>{
+        interactAction = () =>
+        {
             Debug.Log("Interact");
             onInteract?.Invoke();
         };
@@ -34,8 +35,8 @@ public class InteractionTypeTrigger2D : AInteractionType
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("OnTriggerEnter2D");
-        if(layerMask != (layerMask | (1 << other.gameObject.layer))) return;
-        if(!waitingForInput)
+        if (layerMask != (layerMask | (1 << other.gameObject.layer))) return;
+        if (!waitingForInput)
         {
             Debug.Log("Trigger Enter");
             onInteract?.Invoke();
@@ -50,7 +51,7 @@ public class InteractionTypeTrigger2D : AInteractionType
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if(layerMask != (layerMask | (1 << other.gameObject.layer))) return;
+        if (layerMask != (layerMask | (1 << other.gameObject.layer))) return;
         onExit?.Invoke();
         StopAllCoroutines();
         inputManager.OnPressInteract -= interactAction;
