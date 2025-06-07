@@ -2,95 +2,103 @@
 using System.Collections;
 using UnityEngine;
 
-public abstract class AInteractable : MonoBehaviour
+namespace MyUnityPackage.Interactions
 {
-    [SerializeField] private ActivationType activationType = ActivationType.OnStart;
-    [SerializeField] private float delay = default;
-    [SerializeField] private bool once = true;
-    [SerializeField] private AInteractionType interactionType;
-    [SerializeField] private AEffect[] effects;
-    [SerializeField] private ACondition[] conditions;
-
-    protected event Action onEnter;
-    protected event Action onExit;
-    protected event Action onInteract;
-
-    private bool isActive = false;
-
-    private enum ActivationType { OnStart, Manual }
-
-    private bool CanInteract
+    public abstract class AInteractable : MonoBehaviour
     {
-        get
+        [SerializeField] private ActivationType activationType = ActivationType.OnStart;
+        [SerializeField] private float delay = default;
+        [SerializeField] private bool once = true;
+        [SerializeField] private AInteractionType interactionType;
+        [SerializeField] private AEffect[] effects;
+        [SerializeField] private ACondition[] conditions;
+
+        protected event Action onEnter;
+        protected event Action onExit;
+        protected event Action onInteract;
+
+        private bool isActive = false;
+
+        private enum ActivationType { OnStart, Manual }
+
+        private bool CanInteract
         {
+            get
+            {
+                for (int i = 0; i < conditions.Length; i++)
+                {
+                    if (!conditions[i].CheckCondition()) return false;
+                }
+                return true;
+            }
+        }
+
+        protected abstract void Init();
+
+        protected virtual void Start()
+        {
+            Active(false);
+            if (activationType == ActivationType.OnStart) StartCoroutine(WaitDelay());
+            Init();
             for (int i = 0; i < conditions.Length; i++)
             {
-                if (!conditions[i].CheckCondition()) return false;
+                conditions[i].onConditionMet += OnInteract;
             }
-            return true;
+
+            interactionType.onInteract += OnInteract;
+            interactionType.onEnter += OnEnter;
+            interactionType.onExit += OnExit;
         }
-    }
 
-    protected abstract void Init();
-
-    protected virtual void Start()
-    {
-        Active(false);
-        if (activationType == ActivationType.OnStart) StartCoroutine(WaitDelay());
-        Init();
-        interactionType.onInteract += OnInteract;
-        interactionType.onEnter += OnEnter;
-        interactionType.onExit += OnExit;
-    }
-
-    public void OnInteract()
-    {
-        Debug.Log("OnInteract Interactable" + isActive + ": " + CanInteract);
-        if (!isActive || !CanInteract) return;
-        for (int i = 0; i < effects.Length; i++)
+        public void OnInteract()
         {
-            effects[i].OnInteract();
+            Debug.Log("OnInteract Interactable" + isActive + ": " + CanInteract);
+            if (!isActive || !CanInteract) return;
+            for (int i = 0; i < effects.Length; i++)
+            {
+                effects[i].OnInteract();
+            }
+            Active(false);
+            onInteract?.Invoke();
         }
-        Active(false);
-        onInteract?.Invoke();
-    }
 
-    public void OnEnter()
-    {
-        Debug.Log("OnEnter Interactable" + isActive + ": " + CanInteract);
-        if (!isActive || !CanInteract) return;
-        for (int i = 0; i < effects.Length; i++)
+        public void OnEnter()
         {
-            effects[i].OnEnter();
+            Debug.Log("OnEnter Interactable" + isActive + ": " + CanInteract);
+            if (!isActive /*|| !CanInteract*/) return;
+            for (int i = 0; i < effects.Length; i++)
+            {
+                effects[i].OnEnter();
+            }
+            onEnter?.Invoke();
         }
-        onEnter?.Invoke();
-    }
 
-    public void OnExit()
-    {
-        Debug.Log("OnExit Interactable" + isActive + ": " + CanInteract);
-        if (!isActive || !CanInteract) return;
-        for (int i = 0; i < effects.Length; i++)
+        public void OnExit()
         {
-            effects[i].OnExit();
+            Debug.Log("OnExit Interactable" + isActive + ": " + CanInteract);
+            if (!isActive /*|| !CanInteract*/) return;
+            for (int i = 0; i < effects.Length; i++)
+            {
+                effects[i].OnExit();
+            }
+            onExit?.Invoke();
         }
-        onExit?.Invoke();
-    }
 
-    protected void EndInteraction()
-    {
-        if (!once) Active(true);
-    }
+        protected void EndInteraction()
+        {
+            if (!once) Active(true);
+        }
 
-    public virtual void Active(bool pActive)
-    {
-        //Debug.Log("Active : " + pActive);
-        isActive = pActive;
-    }
+        public virtual void Active(bool pActive)
+        {
+            //Debug.Log("Active : " + pActive);
+            isActive = pActive;
+        }
 
-    private IEnumerator WaitDelay()
-    {
-        yield return new WaitForSeconds(delay);
-        Active(true);
+        private IEnumerator WaitDelay()
+        {
+            yield return new WaitForSeconds(delay);
+            Active(true);
+        }
     }
 }

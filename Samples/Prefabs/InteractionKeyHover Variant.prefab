@@ -42,11 +42,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4949540933855677424, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ColorOnEnter
+      value: ChangeColorGreen
       objectReference: {fileID: 0}
     - target: {fileID: 4949540933855677424, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: ChangeColor, MyUnityPackage.Interactions
+      value: MyUnityPackage.Interactions.ChangeColor, MyUnityPackage.Interactions
       objectReference: {fileID: 0}
     - target: {fileID: 4949540933855677424, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -123,15 +123,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3291846172106559567, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8638218098722302489}
-    - targetCorrespondingSourceObject: {fileID: 3953787814361696390, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4980576994011688138}
     - targetCorrespondingSourceObject: {fileID: 1316356368302141387, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6604501411160713798}
     - targetCorrespondingSourceObject: {fileID: 1316356368302141387, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 872670818050784977}
+    - targetCorrespondingSourceObject: {fileID: 3953787814361696390, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4980576994011688138}
   m_SourcePrefab: {fileID: 100100000, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
 --- !u!114 &206875930938155330 stripped
 MonoBehaviour:

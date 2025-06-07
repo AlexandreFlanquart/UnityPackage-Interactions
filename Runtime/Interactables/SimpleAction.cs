@@ -1,21 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-public class SimpleAction : AInteractable
+namespace MyUnityPackage.Interactions
 {
-    [SerializeField] protected UnityEvent OnInteractionStarted = default;
-
-    protected override void Init()
+    public class SimpleAction : AInteractable
     {
-        onInteract += StartSimpleAction;
-    }
+        [SerializeField] protected UnityEvent OnInteractionStarted = default;
 
-    public void StartSimpleAction()
-    {
-        if (gameObject.activeInHierarchy)
+        protected override void Init()
         {
-            OnInteractionStarted?.Invoke();
-            EndInteraction();
+            onInteract += StartSimpleAction;
+        }
+
+        public void StartSimpleAction()
+        {
+            if (gameObject.activeInHierarchy)
+            {
+                OnInteractionStarted?.Invoke();
+                EndInteraction();
+            }
         }
     }
 }

@@ -1,8 +1,11 @@
 using UnityEngine;
 
-public abstract class AEffect : MonoBehaviour
+namespace MyUnityPackage.Interactions
 {
-    public abstract void OnEnter();
-    public abstract void OnExit();
-    public abstract void OnInteract();
+    public abstract class AEffect : MonoBehaviour
+    {
+        public abstract void OnEnter();
+        public abstract void OnExit();
+        public abstract void OnInteract();
+    }
 }

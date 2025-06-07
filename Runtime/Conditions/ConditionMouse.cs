@@ -1,20 +1,26 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-public class ConditionMouse : ACondition, IPointerEnterHandler, IPointerExitHandler
+
+namespace MyUnityPackage.Interactions
 {
-    bool isHover;
-    public void OnPointerEnter(PointerEventData eventData)
+    public class ConditionMouse : ACondition, IPointerEnterHandler, IPointerExitHandler
     {
-        Debug.Log("Je passe sur l'objet");
-        isHover = true;
-    }
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        Debug.Log("Je sort de l'objet");
-        isHover = false;
-    }
-    public override bool CheckCondition()
-    {
-        return isHover;
+        bool isHover;
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            Debug.Log("Je passe sur l'objet");
+            isHover = true;
+            OnConditionMet(true);
+        }
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            Debug.Log("Je sort de l'objet");
+            isHover = false;
+            OnConditionMet(false);
+        }
+        public override bool CheckCondition()
+        {
+            return isHover;
+        }
     }
 }

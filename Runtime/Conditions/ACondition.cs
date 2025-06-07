@@ -1,14 +1,20 @@
 using System;
 using UnityEngine;
 
-public abstract class ACondition : MonoBehaviour
+namespace MyUnityPackage.Interactions
 {
-    public bool shouldBeTrue = true;
-    public event Action<bool> onConditionMet;
-    public abstract bool CheckCondition();
-
-    protected virtual void OnConditionMet(bool conditionMet)
+    public abstract class ACondition : MonoBehaviour
     {
-        onConditionMet?.Invoke(conditionMet);
+        public bool shouldBeTrue = true;
+        public event Action onConditionMet;
+        public abstract bool CheckCondition();
+
+        protected virtual void OnConditionMet(bool conditionMet)
+        {
+            Debug.Log("" + conditionMet);
+            //Probleme ici
+            if (conditionMet == shouldBeTrue)
+                onConditionMet?.Invoke();
+        }
     }
 }

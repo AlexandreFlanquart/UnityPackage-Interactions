@@ -5,91 +5,94 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using MyUnityPackage.Toolkit;
 
-public class RangeChecker : MonoBehaviour
+namespace MyUnityPackage.Interactions
 {
-    [SerializeField] private Transform player;
-    [SerializeField] private float checkFrequency = 0.1f;
-
-    private Vector3 currentPlayerPos;
-    private List<RangeHandler> rangeHandlers = new List<RangeHandler>();
-
-    public bool forceCheck = false;
-
-    // Start is called before the first frame update
-    void Start()
+    public class RangeChecker : MonoBehaviour
     {
-        ServiceLocator.AddService<RangeChecker>(gameObject);
-        StartCalculating();
-    }
-    
-    public void StartCalculating()
-    {
-        StartCoroutine(Calculating());
-    }
+        [SerializeField] private Transform player;
+        [SerializeField] private float checkFrequency = 0.1f;
 
-    public void StopCalculating()
-    {
-        StopAllCoroutines();
-    }
+        private Vector3 currentPlayerPos;
+        private List<RangeHandler> rangeHandlers = new List<RangeHandler>();
 
-    private IEnumerator Calculating()
-    {
-        while (true)
+        public bool forceCheck = false;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            CalculateRange();
-            yield return new WaitForSeconds(checkFrequency);
+            ServiceLocator.AddService<RangeChecker>(gameObject);
+            StartCalculating();
         }
-    }
-    
-    public void AddRangeElement(RangeHandler rangeHandler)
-    {
-        if (!rangeHandlers.Contains(rangeHandler))
-        {
-            rangeHandlers.Add(rangeHandler);
-            CalculateRange(rangeHandler);
-        }
-    }
 
-    public void RemoveRangeElement(RangeHandler rangeHandler)
-    {
-        if (rangeHandlers.Contains(rangeHandler))
+        public void StartCalculating()
         {
-            rangeHandlers.Remove(rangeHandler);
+            StartCoroutine(Calculating());
         }
-    }
 
-    private void CalculateRange()
-    {
-        if (!player.gameObject.activeInHierarchy) return;
-        if ((player != null && currentPlayerPos != player.position) || forceCheck)
+        public void StopCalculating()
         {
-            forceCheck = false;
-            for(int i = 0; i < rangeHandlers.Count; i++)
+            StopAllCoroutines();
+        }
+
+        private IEnumerator Calculating()
+        {
+            while (true)
             {
-                CalculateRange(rangeHandlers[i]);
+                CalculateRange();
+                yield return new WaitForSeconds(checkFrequency);
             }
         }
-    }
 
-    public void CalculateRange(RangeHandler pRangeHandler)
-    {
-        currentPlayerPos = player.position;
-        float dist = Vector3.Distance(player.position, pRangeHandler.Center.position);
-        pRangeHandler.CheckRange(dist);
-    }
+        public void AddRangeElement(RangeHandler rangeHandler)
+        {
+            if (!rangeHandlers.Contains(rangeHandler))
+            {
+                rangeHandlers.Add(rangeHandler);
+                CalculateRange(rangeHandler);
+            }
+        }
 
-    #if UNITY_EDITOR
-    [Button]
-    private void StartCalculating_Test()
-    {
-        Debug.Log(rangeHandlers.Count);
-        StartCalculating();
-    }
+        public void RemoveRangeElement(RangeHandler rangeHandler)
+        {
+            if (rangeHandlers.Contains(rangeHandler))
+            {
+                rangeHandlers.Remove(rangeHandler);
+            }
+        }
 
-    [Button]
-    private void StopCalculating_Test()
-    {
-        StopCalculating();
+        private void CalculateRange()
+        {
+            if (!player.gameObject.activeInHierarchy) return;
+            if ((player != null && currentPlayerPos != player.position) || forceCheck)
+            {
+                forceCheck = false;
+                for (int i = 0; i < rangeHandlers.Count; i++)
+                {
+                    CalculateRange(rangeHandlers[i]);
+                }
+            }
+        }
+
+        public void CalculateRange(RangeHandler pRangeHandler)
+        {
+            currentPlayerPos = player.position;
+            float dist = Vector3.Distance(player.position, pRangeHandler.Center.position);
+            pRangeHandler.CheckRange(dist);
+        }
+
+#if UNITY_EDITOR
+        [Button]
+        private void StartCalculating_Test()
+        {
+            Debug.Log(rangeHandlers.Count);
+            StartCalculating();
+        }
+
+        [Button]
+        private void StopCalculating_Test()
+        {
+            StopCalculating();
+        }
+#endif
     }
-    #endif
 }

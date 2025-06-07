@@ -1,36 +1,44 @@
 using UnityEngine;
 
-public class ChangeColor : MonoBehaviour
+namespace MyUnityPackage.Interactions
 {
-
-    [SerializeField] private MeshRenderer mesh;
-    [SerializeField] private RangeHandler rangeHandler;
-
-    [SerializeField] bool isColliding;
-
-    void Start()
-    {
-        if (isColliding)
-            return;
-        rangeHandler.onPlayerMoveInRange += OnPlayerMoveInRange;
-        rangeHandler.onRangeEnter += ColorOnEnter;
-        rangeHandler.onRangeExit += ColorOnExit;
-    }
-
-    public void OnPlayerMoveInRange(float pDistance)
+    public class ChangeColor : MonoBehaviour
     {
 
-        Color color = new Color(pDistance / rangeHandler.MaxDistance, 1 - pDistance / rangeHandler.MaxDistance, 0, 1);
-        mesh.material.SetColor("_BaseColor", color);
-    }
-    public void ColorOnEnter()
-    {
-        Debug.Log("OnEnter");
-        mesh.material.SetColor("_BaseColor", Color.green);
-    }
-    public void ColorOnExit()
-    {
-        Debug.Log("OnExit");
-        mesh.material.SetColor("_BaseColor", Color.red);
+        [SerializeField] private MeshRenderer mesh;
+        [SerializeField] private RangeHandler rangeHandler;
+
+        [SerializeField] bool isColliding;
+
+        void Start()
+        {
+            if (isColliding)
+                return;
+            rangeHandler.onPlayerMoveInRange += OnPlayerMoveInRange;
+            rangeHandler.onRangeEnter += ChangeColorGreen;
+            rangeHandler.onRangeExit += ChangeColorRed;
+        }
+
+        public void OnPlayerMoveInRange(float pDistance)
+        {
+
+            Color color = new Color(pDistance / rangeHandler.MaxDistance, 1 - pDistance / rangeHandler.MaxDistance, 0, 1);
+            mesh.material.SetColor("_BaseColor", color);
+        }
+        public void ChangeColorBlue()
+        {
+            Debug.Log("Blue");
+            mesh.material.SetColor("_BaseColor", Color.blue);
+        }
+        public void ChangeColorGreen()
+        {
+            Debug.Log("Green");
+            mesh.material.SetColor("_BaseColor", Color.green);
+        }
+        public void ChangeColorRed()
+        {
+            Debug.Log("Red");
+            mesh.material.SetColor("_BaseColor", Color.red);
+        }
     }
 }

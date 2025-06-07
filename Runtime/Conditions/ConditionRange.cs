@@ -1,44 +1,47 @@
 using System;
 using UnityEngine;
 
-public class ConditionRange : ACondition
+namespace MyUnityPackage.Interactions
 {
-    [SerializeField] private RangeHandler rangeHandler;
-
-    private bool inRange = false;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class ConditionRange : ACondition
     {
+        [SerializeField] private RangeHandler rangeHandler;
 
-    }
+        private bool inRange = false;
 
-    void OnEnable()
-    {
-        rangeHandler.onRangeEnter += OnRangeEnter;
-        rangeHandler.onRangeExit += OnRangeExit;
-    }
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
+        {
 
-    void OnDisable()
-    {
-        rangeHandler.onRangeEnter -= OnRangeEnter;
-        rangeHandler.onRangeExit -= OnRangeExit;
-    }
+        }
 
-    private void OnRangeEnter()
-    {
-        inRange = true;
-        OnConditionMet(true);
-    }
+        void OnEnable()
+        {
+            rangeHandler.onRangeEnter += OnRangeEnter;
+            rangeHandler.onRangeExit += OnRangeExit;
+        }
 
-    private void OnRangeExit()
-    {
-        inRange = false;
-        OnConditionMet(false);
-    }
+        void OnDisable()
+        {
+            rangeHandler.onRangeEnter -= OnRangeEnter;
+            rangeHandler.onRangeExit -= OnRangeExit;
+        }
 
-    public override bool CheckCondition()
-    {
-        return inRange;
+        private void OnRangeEnter()
+        {
+            inRange = true;
+            OnConditionMet(true);
+        }
+
+        private void OnRangeExit()
+        {
+            inRange = false;
+            OnConditionMet(false);
+        }
+
+        public override bool CheckCondition()
+        {
+            return inRange;
+        }
     }
 }

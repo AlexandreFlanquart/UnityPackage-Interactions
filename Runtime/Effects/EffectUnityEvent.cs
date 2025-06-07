@@ -1,23 +1,27 @@
 using UnityEngine;
 using UnityEngine.Events;
-public class EffectUnityEvent : AEffect
+
+namespace MyUnityPackage.Interactions
 {
-    [SerializeField] private UnityEvent onEnter;
-    [SerializeField] private UnityEvent onExit;
-    [SerializeField] private UnityEvent onInteract;
-
-    public override void OnEnter()
+    public class EffectUnityEvent : AEffect
     {
-        onEnter?.Invoke();
-    }
+        [SerializeField] private UnityEvent onEnter;
+        [SerializeField] private UnityEvent onExit;
+        [SerializeField] private UnityEvent onInteract;
 
-    public override void OnExit()
-    {
-        onExit?.Invoke();
-    }
+        public override void OnEnter()
+        {
+            onEnter?.Invoke();
+        }
 
-    public override void OnInteract()
-    {
-        onInteract?.Invoke();
+        public override void OnExit()
+        {
+            onExit?.Invoke();
+        }
+
+        public override void OnInteract()
+        {
+            onInteract?.Invoke();
+        }
     }
 }

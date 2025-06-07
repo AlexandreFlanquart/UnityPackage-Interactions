@@ -171,12 +171,16 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 8970303709504890713, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
     - {fileID: 8916557374565898331, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+    - {fileID: 8478632943956400566, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3291846172106559567, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3420560479166365430}
+    - targetCorrespondingSourceObject: {fileID: 3953787814361696390, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4521269334485501353}
   m_SourcePrefab: {fileID: 100100000, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
 --- !u!114 &42685143547692156 stripped
 MonoBehaviour:
@@ -209,6 +213,34 @@ MonoBehaviour:
   mesh: {fileID: 2146278155735159850}
   rangeHandler: {fileID: 42685143547692156}
   isColliding: 1
+--- !u!1 &1380615505234437063 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3953787814361696390, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 2735447959249955649}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &4521269334485501353
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380615505234437063}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8377548
+  m_Height: 2.4951901
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.7475951, z: -0.3377548}
 --- !u!23 &2146278155735159850 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 4053063680452951915, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}

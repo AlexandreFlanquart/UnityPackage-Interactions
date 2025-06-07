@@ -1,19 +1,24 @@
 using UnityEngine;
 using System;
 using MyUnityPackage.Toolkit;
-public class InteractionTypeKeyboard : AInteractionType
+
+namespace MyUnityPackage.Interactions
 {
-    public override event Action onEnter;
-    public override event Action onExit;
-    public override event Action onInteract;
-
-    void Start()
+    public class InteractionTypeKeyboard : AInteractionType
     {
-        ServiceLocator.GetService<InputManager>().OnPressInteract += OnInteract;
-    }
-    void OnInteract()
-    {
-        onInteract?.Invoke();
-    }
+        public override event Action onEnter;
+        public override event Action onExit;
+        public override event Action onInteract;
 
+        void Start()
+        {
+            ServiceLocator.GetService<InputManager>().OnPressInteract += OnInteract;
+        }
+        void OnInteract()
+        {
+            Debug.Log("Interact keyboard");
+            onInteract?.Invoke();
+        }
+
+    }
 }
