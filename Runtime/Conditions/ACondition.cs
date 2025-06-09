@@ -11,7 +11,7 @@ namespace MyUnityPackage.Interactions
 
         protected virtual void OnConditionMet(bool conditionMet)
         {
-            Debug.Log("" + conditionMet);
+            Debug.Log("OnConditionMet : " + conditionMet);
             //Probleme ici
             if (conditionMet == shouldBeTrue)
                 onConditionMet?.Invoke();

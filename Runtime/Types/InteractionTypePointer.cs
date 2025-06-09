@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -14,6 +15,7 @@ namespace MyUnityPackage.Interactions
         {
             Debug.Log("Clic entré");
             onEnter?.Invoke();
+
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -25,7 +27,15 @@ namespace MyUnityPackage.Interactions
         public void OnPointerClick(PointerEventData eventData)
         {
             Debug.Log("Clic clic");
+            isWaitingCondition = true;
             onInteract?.Invoke();
+            StartCoroutine(WaitDelay(0.5f));
+        }
+
+        IEnumerator WaitDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            isWaitingCondition = false;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace MyUnityPackage.Interactions
 
         private enum ActivationType { OnStart, Manual }
 
-        private bool CanInteract
+        private bool isConditionsReady
         {
             get
             {
@@ -42,7 +42,7 @@ namespace MyUnityPackage.Interactions
             Init();
             for (int i = 0; i < conditions.Length; i++)
             {
-                conditions[i].onConditionMet += OnInteract;
+                conditions[i].onConditionMet += OnConditionChanged;
             }
 
             interactionType.onInteract += OnInteract;
@@ -50,10 +50,17 @@ namespace MyUnityPackage.Interactions
             interactionType.onExit += OnExit;
         }
 
+        public void OnConditionChanged()
+        {
+            if (interactionType.isWaitingCondition)
+                OnInteract();
+            Debug.Log("OnConditionChanged - isConditionsReady : " + isConditionsReady);
+        }
+
         public void OnInteract()
         {
-            Debug.Log("OnInteract Interactable" + isActive + ": " + CanInteract);
-            if (!isActive || !CanInteract) return;
+            Debug.Log("OnInteract Interactable" + isActive + ": " + isConditionsReady);
+            if (!isActive || !isConditionsReady) return;
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i].OnInteract();
@@ -64,8 +71,8 @@ namespace MyUnityPackage.Interactions
 
         public void OnEnter()
         {
-            Debug.Log("OnEnter Interactable" + isActive + ": " + CanInteract);
-            if (!isActive /*|| !CanInteract*/) return;
+            Debug.Log("OnEnter Interactable" + isActive + ": " + isConditionsReady);
+            if (!isActive || !isConditionsReady) return;
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i].OnEnter();
@@ -75,8 +82,8 @@ namespace MyUnityPackage.Interactions
 
         public void OnExit()
         {
-            Debug.Log("OnExit Interactable" + isActive + ": " + CanInteract);
-            if (!isActive /*|| !CanInteract*/) return;
+            Debug.Log("OnExit Interactable" + isActive + ": " + isConditionsReady);
+            if (!isActive || !isConditionsReady) return;
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i].OnExit();
@@ -86,6 +93,7 @@ namespace MyUnityPackage.Interactions
 
         protected void EndInteraction()
         {
+            Debug.Log("EndInteraction : " + once);
             if (!once) Active(true);
         }
 

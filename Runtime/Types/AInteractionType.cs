@@ -8,6 +8,7 @@ namespace MyUnityPackage.Interactions
         public abstract event Action onEnter;
         public abstract event Action onExit;
         public abstract event Action onInteract;
+        public bool isWaitingCondition = false;
     }
 }
 
