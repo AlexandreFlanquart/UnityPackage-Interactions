@@ -13,9 +13,9 @@ namespace MyUnityPackage.Interactions
 
         protected override void Init()
         {
-            onEnter += delegate { interactionIcon.canInteract = true; };
-            onExit += delegate { interactionIcon.canInteract = false; };
-            onInteract += AskQuestion;
+            onEnterAction += delegate { interactionIcon.canInteract = true; };
+            onExitAction += delegate { interactionIcon.canInteract = false; };
+            onInteractAction += AskQuestion;
         }
 
         public void AskQuestion()

@@ -27,15 +27,9 @@ namespace MyUnityPackage.Interactions
         public void OnPointerClick(PointerEventData eventData)
         {
             Debug.Log("Clic clic");
-            isWaitingCondition = true;
             onInteract?.Invoke();
-            StartCoroutine(WaitDelay(0.5f));
         }
 
-        IEnumerator WaitDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            isWaitingCondition = false;
-        }
+
     }
 }

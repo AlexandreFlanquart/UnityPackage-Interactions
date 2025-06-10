@@ -35,12 +35,14 @@ namespace MyUnityPackage.Interactions
 
         private void OnRangeExit()
         {
+            Debug.Log("Range Exit");
             inRange = false;
             OnConditionMet(false);
         }
 
         public override bool CheckCondition()
         {
+            Debug.Log("In Range " + inRange);
             return inRange;
         }
     }

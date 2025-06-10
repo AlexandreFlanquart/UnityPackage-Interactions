@@ -9,7 +9,7 @@ namespace MyUnityPackage.Interactions
 
         protected override void Init()
         {
-            onInteract += StartSimpleAction;
+            onInteractAction += StartSimpleAction;
         }
 
         public void StartSimpleAction()

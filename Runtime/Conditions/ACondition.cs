@@ -6,15 +6,15 @@ namespace MyUnityPackage.Interactions
     public abstract class ACondition : MonoBehaviour
     {
         public bool shouldBeTrue = true;
-        public event Action onConditionMet;
+        public event Action<bool> onConditionMet;
         public abstract bool CheckCondition();
+
+        public bool requiredForEnter;
 
         protected virtual void OnConditionMet(bool conditionMet)
         {
             Debug.Log("OnConditionMet : " + conditionMet);
-            //Probleme ici
-            if (conditionMet == shouldBeTrue)
-                onConditionMet?.Invoke();
+            onConditionMet?.Invoke(conditionMet);
         }
     }
 }
