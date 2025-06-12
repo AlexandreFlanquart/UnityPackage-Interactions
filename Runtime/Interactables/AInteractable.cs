@@ -9,53 +9,45 @@ namespace MyUnityPackage.Interactions
         [SerializeField] private ActivationType activationType = ActivationType.OnStart;
         [SerializeField] private float delay = default;
         [SerializeField] private bool once = true;
+
         [SerializeField] private AInteractionType interactionType;
         [SerializeField] private AEffect[] effects;
         [SerializeField] private ACondition[] conditions;
 
-        [SerializeField] private CurrentState currentState = CurrentState.None;
+        private CurrentState currentState = CurrentState.None;
         protected event Action onEnterAction;
         protected event Action onExitAction;
         protected event Action onInteractAction;
 
-        private bool isActive = false;
-        private bool hasRequiredForEnterConditions
-        {
-            get
-            {
-                for (int i = 0; i < conditions.Length; i++)
-                {
-                    if (conditions[i].requiredForEnter) return true;
-                }
-                return false;
-            }
-        }
+        private bool isEnable = false;
+        protected bool hasTrigger = false;
+
         private enum ActivationType { OnStart, Manual }
 
-        private enum CurrentState { None, TypeAndConditions, WaitingConditionsActive, WaitingTypesActive };
+        private enum CurrentState { None, onEnterActive, onInteractActive };
         private bool isConditionsReady
         {
             get
             {
+                bool isReady = true;
                 for (int i = 0; i < conditions.Length; i++)
                 {
-                    if (!conditions[i].CheckCondition()) return false;
+                    if (!conditions[i].CheckCondition()) isReady = false;
                 }
-                return true;
+                return isReady;
             }
         }
-        private bool isRequiredForEnterConditionReady
+        private bool isRequiredConditionsActives
         {
             get
             {
                 for (int i = 0; i < conditions.Length; i++)
                 {
-                    if (conditions[i].requiredForEnter && !conditions[i].CheckCondition()) return false;
+                    if (conditions[i].requiredForEffect && !conditions[i].CheckCondition()) return false;
                 }
                 return true;
             }
         }
-        bool lastStateIsExit = false;
         protected abstract void Init();
 
         protected virtual void Start()
@@ -64,100 +56,133 @@ namespace MyUnityPackage.Interactions
             if (activationType == ActivationType.OnStart) StartCoroutine(WaitDelay());
             Init();
 
+            currentState = CurrentState.None;
             for (int i = 0; i < conditions.Length; i++)
             {
                 conditions[i].onConditionMet += OnConditionChanged;
             }
 
-            interactionType.onInteract += OnInteract;
-            interactionType.onEnter += OnEnter;
-            interactionType.onExit += OnExit;
+            if (interactionType != null)
+            {
+                hasTrigger = true;
+                interactionType.onInteract += OnInteractTrigger;
+                interactionType.onEnter += OnEnterTrigger;
+                interactionType.onExit += OnExitTrigger;
+            }
+            else
+            {
+                hasTrigger = false;
+            }
+
         }
         //Allow to trigger the function when a state has change
         public void OnConditionChanged(bool isInteracting)
         {
-            if (isInteracting && CurrentState.WaitingTypesActive == currentState && isConditionsReady)
-                OnInteract();
-            else if (isInteracting)
-                OnEnter();
-            else if (!isInteracting)
+            Debug.Log("OnConditionChanged");
+
+            if (isInteracting && currentState == CurrentState.None && isRequiredConditionsActives)
             {
-                Debug.Log("J'exit");
-                //currentState = CurrentState.WaitingConditionsActive;
+                Debug.Log("OnEnter");
+                OnEnter();
+            }
+            else if (!isInteracting && currentState == CurrentState.onEnterActive)
+            {
+                Debug.Log("exit");
                 OnExit();
             }
 
-            Debug.Log("OnConditionChanged - isConditionsReady : " + isConditionsReady);
+            if (isInteracting && currentState == CurrentState.onEnterActive && isConditionsReady && !hasTrigger)
+            {
+                Debug.Log("OnInteract");
+                OnInteract();
+            }
+
+            Debug.Log("isConditionsReady : " + isConditionsReady);
         }
+
+        private void OnInteractTrigger()
+        {
+            Debug.Log("OnInteractType");
+            if (isConditionsReady)
+            {
+                Debug.Log("OnInteract");
+                OnInteract();
+            }
+        }
+
+        protected virtual void OnEnterTrigger()
+        {
+            Debug.Log("OnEnter triger");
+            // check condition pour afficher les manquantes
+
+        }
+
+        protected virtual void OnExitTrigger()
+        {
+            Debug.Log("OnExit trigger");
+
+        }
+
         //Function to call when the main condition is good
         public void OnInteract()
         {
-            Debug.Log("OnInteract Interactable" + isActive + ": " + isConditionsReady);
-            if (!isActive || !isConditionsReady) return;
+            Debug.Log("OnInteract Interactable" + isEnable);
+            if (!isEnable) return;
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i].OnInteract();
             }
             Active(false);
-            currentState = CurrentState.TypeAndConditions;
+            currentState = CurrentState.onInteractActive;
             onInteractAction?.Invoke();
-            lastStateIsExit = false;
         }
+
         //Function to call when the main condition can be call
         public void OnEnter()
         {
-            if (hasRequiredForEnterConditions)
-            {
-                Debug.Log("OnEnter Interactable ForEnter" + isActive + ": " + isRequiredForEnterConditionReady);
-                if (!isActive || !isRequiredForEnterConditionReady)
-                    return;
-            }
-            else
-            {
-                Debug.Log("OnEnter Interactable" + isActive + ": " + isConditionsReady);
-                if (!isActive || !isConditionsReady)
-                    return;
-            }
+            if (!isEnable)
+                return;
 
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i].OnEnter();
             }
-            currentState = CurrentState.WaitingTypesActive;
+            currentState = CurrentState.onEnterActive;
             onEnterAction?.Invoke();
-            lastStateIsExit = false;
         }
+
         //Function to call when the main condition can't be call anymore
         public void OnExit()
         {
-            Debug.Log("OnExit Interactable" + isActive + ": " + isConditionsReady);
+            Debug.Log("OnExit Interactable" + isEnable);
 
-            if (!isActive || lastStateIsExit || currentState == CurrentState.None) return;
+            if (!isEnable) return;
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i].OnExit();
             }
-            if (isConditionsReady)
-                currentState = CurrentState.WaitingTypesActive;
-            else if (currentState == CurrentState.TypeAndConditions)
-                currentState = CurrentState.WaitingConditionsActive;
-            else
-                currentState = CurrentState.None;
+
+            currentState = CurrentState.None;
 
             onExitAction?.Invoke();
-            lastStateIsExit = true;
         }
 
         protected void EndInteraction()
         {
             Debug.Log("EndInteraction : " + once);
             if (!once) Active(true);
+            currentState = CurrentState.None;
+            OnExit();
+            if (true)
+            {
+                // to dos
+            }
         }
 
         public virtual void Active(bool pActive)
         {
             //Debug.Log("Active : " + pActive);
-            isActive = pActive;
+            isEnable = pActive;
         }
 
         private IEnumerator WaitDelay()

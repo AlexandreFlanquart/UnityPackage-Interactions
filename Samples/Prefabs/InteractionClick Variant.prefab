@@ -146,12 +146,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5754107839652027554, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: conditions.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5754107839652027554, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: 'conditions.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 3894446021226411156}
     - target: {fileID: 5754107839652027554, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: 'conditions.Array.data[1]'
       value: 
@@ -178,9 +178,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3291846172106559567, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3420560479166365430}
-    - targetCorrespondingSourceObject: {fileID: 3953787814361696390, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 5509233429528981068, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4521269334485501353}
+      addedObject: {fileID: 3894446021226411156}
   m_SourcePrefab: {fileID: 100100000, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
 --- !u!114 &42685143547692156 stripped
 MonoBehaviour:
@@ -213,36 +213,27 @@ MonoBehaviour:
   mesh: {fileID: 2146278155735159850}
   rangeHandler: {fileID: 42685143547692156}
   isColliding: 1
---- !u!1 &1380615505234437063 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3953787814361696390, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
-  m_PrefabInstance: {fileID: 2735447959249955649}
-  m_PrefabAsset: {fileID: 0}
---- !u!136 &4521269334485501353
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1380615505234437063}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.8377548
-  m_Height: 2.4951901
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.7475951, z: -0.3377548}
 --- !u!23 &2146278155735159850 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 4053063680452951915, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
   m_PrefabInstance: {fileID: 2735447959249955649}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7602913931876697357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5509233429528981068, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 2735447959249955649}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3894446021226411156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7602913931876697357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0ca425c04f82d4408ef6e47d797e40a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shouldBeTrue: 1
+  requiredForEffect: 1

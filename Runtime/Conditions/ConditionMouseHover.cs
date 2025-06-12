@@ -3,9 +3,10 @@ using UnityEngine.EventSystems;
 
 namespace MyUnityPackage.Interactions
 {
-    public class ConditionMouse : ACondition, IPointerEnterHandler, IPointerExitHandler
+    public class ConditionMouseHover : ACondition, IPointerEnterHandler, IPointerExitHandler
     {
-        bool isHover;
+        private bool isHover;
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             Debug.Log("Je passe sur l'objet");

@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 
@@ -5,13 +6,29 @@ namespace MyUnityPackage.Interactions
 {
     public class ConditionLevel : ACondition
     {
+        [SerializeField] private int _level;
 
+        public int Level
+        {
+            get => _level;
+            set
+            {
+                _level = value;
+                OnConditionMet(true);
+            }
+        }
 
-        [SerializeField] private int level;
         public override bool CheckCondition()
         {
-            Debug.Log("In Level " + level);
-            return level >= 10;
+            bool condition = _level >= 10;
+            Debug.Log("condition : " + condition);
+            return condition;
+        }
+
+        [Button]
+        private void ChangeLevel()
+        {
+            Level = 100000;
         }
     }
 }

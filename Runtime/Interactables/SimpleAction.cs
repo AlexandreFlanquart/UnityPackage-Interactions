@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace MyUnityPackage.Interactions
@@ -17,8 +18,15 @@ namespace MyUnityPackage.Interactions
             if (gameObject.activeInHierarchy)
             {
                 OnInteractionStarted?.Invoke();
-                EndInteraction();
+                StartCoroutine(WaitDelay(5));
             }
+        }
+
+
+        private IEnumerator WaitDelay(int delay)
+        {
+            yield return new WaitForSeconds(delay);
+            EndInteraction();
         }
     }
 }
