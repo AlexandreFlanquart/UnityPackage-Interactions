@@ -3,7 +3,7 @@ using System;
 
 namespace MyUnityPackage.Interactions
 {
-    public class InteractionTypeCollider : AInteractionType
+    public class InteractionTriggerCollider : AInteractionTrigger
     {
         public override event Action onEnter;
         public override event Action onExit;

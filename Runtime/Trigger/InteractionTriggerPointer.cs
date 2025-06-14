@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace MyUnityPackage.Interactions
 {
-    public class InteractionTypePointer : AInteractionType, IPointerClickHandler
+    public class InteractionTriggerPointer : AInteractionTrigger, IPointerClickHandler
     {
         public override event Action onEnter;
         public override event Action onExit;

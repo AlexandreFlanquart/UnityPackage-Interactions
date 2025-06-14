@@ -5,7 +5,7 @@ using MyUnityPackage.Toolkit;
 
 namespace MyUnityPackage.Interactions
 {
-    public class InteractionTypeTrigger : AInteractionType
+    public class InteractionTriggerTrigger : AInteractionTrigger
     {
         public override event Action onEnter;
         public override event Action onExit;

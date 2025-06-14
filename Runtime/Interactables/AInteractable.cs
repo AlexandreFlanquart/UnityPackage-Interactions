@@ -10,7 +10,7 @@ namespace MyUnityPackage.Interactions
         [SerializeField] private float delay = default;
         [SerializeField] private bool once = true;
 
-        [SerializeField] private AInteractionType interactionType;
+        [SerializeField] private AInteractionTrigger interactionTrigger;
         [SerializeField] private AEffect[] effects;
         [SerializeField] private ACondition[] conditions;
 
@@ -62,12 +62,12 @@ namespace MyUnityPackage.Interactions
                 conditions[i].onConditionMet += OnConditionChanged;
             }
 
-            if (interactionType != null)
+            if (interactionTrigger != null)
             {
                 hasTrigger = true;
-                interactionType.onInteract += OnInteractTrigger;
-                interactionType.onEnter += OnEnterTrigger;
-                interactionType.onExit += OnExitTrigger;
+                interactionTrigger.onInteract += OnInteractTrigger;
+                interactionTrigger.onEnter += OnEnterTrigger;
+                interactionTrigger.onExit += OnExitTrigger;
             }
             else
             {
@@ -98,6 +98,7 @@ namespace MyUnityPackage.Interactions
             }
 
             Debug.Log("isConditionsReady : " + isConditionsReady);
+            Debug.Log("isRequiredConditionsActives : " + isRequiredConditionsActives);
         }
 
         private void OnInteractTrigger()

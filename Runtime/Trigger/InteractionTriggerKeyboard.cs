@@ -4,7 +4,7 @@ using MyUnityPackage.Toolkit;
 
 namespace MyUnityPackage.Interactions
 {
-    public class InteractionTypeKeyboard : AInteractionType
+    public class InteractionTriggerKeyboard : AInteractionTrigger
     {
         public override event Action onEnter;
         public override event Action onExit;

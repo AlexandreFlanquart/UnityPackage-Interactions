@@ -5,23 +5,23 @@ namespace MyUnityPackage.Interactions
 {
     public class EffectUnityEvent : AEffect
     {
-        [SerializeField] private UnityEvent onEnter;
-        [SerializeField] private UnityEvent onExit;
-        [SerializeField] private UnityEvent onInteract;
+        [SerializeField] private UnityEvent onEnterUEvent;
+        [SerializeField] private UnityEvent onExitUEvent;
+        [SerializeField] private UnityEvent onInteractUEvent;
 
         public override void OnEnter()
         {
-            onEnter?.Invoke();
+            onEnterUEvent?.Invoke();
         }
 
         public override void OnExit()
         {
-            onExit?.Invoke();
+            onExitUEvent?.Invoke();
         }
 
         public override void OnInteract()
         {
-            onInteract?.Invoke();
+            onInteractUEvent?.Invoke();
         }
     }
 }
