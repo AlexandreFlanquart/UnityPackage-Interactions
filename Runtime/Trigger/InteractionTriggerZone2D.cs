@@ -5,7 +5,7 @@ using MyUnityPackage.Toolkit;
 
 namespace MyUnityPackage.Interactions
 {
-    public class InteractionTriggerTrigger2D : AInteractionTrigger
+    public class InteractionTriggerZone2D : AInteractionTrigger
     {
         [SerializeField] private LayerMask layerMask;
         [SerializeField] private bool waitingForInput = true;

@@ -75,6 +75,8 @@ namespace MyUnityPackage.Interactions
             }
 
         }
+
+
         //Allow to trigger the function when a state has change
         public void OnConditionChanged(bool isInteracting)
         {
