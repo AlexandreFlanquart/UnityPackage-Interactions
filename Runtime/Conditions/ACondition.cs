@@ -6,7 +6,7 @@ namespace MyUnityPackage.Interactions
     public abstract class ACondition : MonoBehaviour
     {
         public bool shouldBeTrue = true;
-        public bool requiredForEffect;
+        public bool requiredForEffects;
 
         public event Action<bool> onConditionMet;
         public abstract bool CheckCondition();

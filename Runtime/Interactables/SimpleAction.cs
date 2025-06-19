@@ -18,7 +18,7 @@ namespace MyUnityPackage.Interactions
             if (gameObject.activeInHierarchy)
             {
                 OnInteractionStarted?.Invoke();
-                StartCoroutine(WaitDelay(5));
+                StartCoroutine(WaitDelay(3));
             }
         }
 

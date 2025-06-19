@@ -14,7 +14,7 @@ namespace MyUnityPackage.Interactions
             set
             {
                 _level = value;
-                OnConditionMet(true);
+                OnConditionMet(_level >= 10);
             }
         }
 
@@ -26,9 +26,14 @@ namespace MyUnityPackage.Interactions
         }
 
         [Button]
-        private void ChangeLevel()
+        private void AddLevel()
         {
-            Level = 100000;
+            Level = 100;
+        }
+        [Button]
+        private void RemoveLevel()
+        {
+            Level = 0;
         }
     }
 }

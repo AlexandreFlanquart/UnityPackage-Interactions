@@ -11,13 +11,6 @@ namespace MyUnityPackage.Interactions
         public override event Action onExit;
         public override event Action onInteract;
         [SerializeField] private LayerMask layerMask;
-        private Action interactAction;
-
-        void Start()
-        {
-            interactAction = () => onInteract?.Invoke();
-        }
-
 
         void OnTriggerEnter(Collider other)
         {
@@ -32,7 +25,6 @@ namespace MyUnityPackage.Interactions
             if (layerMask != (layerMask | (1 << other.gameObject.layer))) return;
 
             onExit?.Invoke();
-            StopAllCoroutines();
         }
 
     }

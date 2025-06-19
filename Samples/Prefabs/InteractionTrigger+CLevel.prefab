@@ -45,71 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shouldBeTrue: 1
-  requiredForEffect: 0
+  requiredForEffects: 0
   _level: 0
---- !u!1 &5719473487903627865
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 640644004215187903}
-  - component: {fileID: 6545855617406778335}
-  - component: {fileID: 726698246160871461}
-  m_Layer: 0
-  m_Name: Range
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &640644004215187903
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5719473487903627865}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1516480121727940716}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6545855617406778335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5719473487903627865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac1d3c4dac782974d9ee16ac34a7a6e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shouldBeTrue: 1
-  requiredForEffect: 1
-  rangeHandler: {fileID: 726698246160871461}
---- !u!114 &726698246160871461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5719473487903627865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad2f7c9883996df41adc157166194d79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rangeCheckerRegisterType: 0
-  center: {fileID: 8992725725971328033}
-  maxDistance: 15
 --- !u!1 &8901261686146472783
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +76,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 640644004215187903}
   - {fileID: 5640083785633610644}
   m_Father: {fileID: 8992725725971328033}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -151,6 +87,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1695883754772423732, guid: d83551b8dfa75aa4098adcee1bebc085, type: 3}
+      propertyPath: isColliding
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2139860881135647805, guid: d83551b8dfa75aa4098adcee1bebc085, type: 3}
       propertyPath: m_Name
       value: InteractionTrigger+CLevel
@@ -207,6 +147,14 @@ PrefabInstance:
       propertyPath: delay
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8706640584195963001, guid: d83551b8dfa75aa4098adcee1bebc085, type: 3}
+      propertyPath: conditions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8706640584195963001, guid: d83551b8dfa75aa4098adcee1bebc085, type: 3}
+      propertyPath: 'conditions.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7587307683815204553}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

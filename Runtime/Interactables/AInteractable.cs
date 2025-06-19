@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using PlasticGui.Help.Conditions;
 using UnityEngine;
 
 namespace MyUnityPackage.Interactions
@@ -15,12 +16,15 @@ namespace MyUnityPackage.Interactions
         [SerializeField] private ACondition[] conditions;
 
         private CurrentState currentState = CurrentState.None;
+        protected event Action onEnableAction;
+        protected event Action onDisableAction;
         protected event Action onEnterAction;
         protected event Action onExitAction;
         protected event Action onInteractAction;
 
         private bool isEnable = false;
         protected bool hasTrigger = false;
+        protected bool hasConditions = false;
 
         private enum ActivationType { OnStart, Manual }
 
@@ -41,18 +45,25 @@ namespace MyUnityPackage.Interactions
         {
             get
             {
+                bool hasRequiredCondition = false;
                 for (int i = 0; i < conditions.Length; i++)
                 {
-                    if (conditions[i].requiredForEffect && !conditions[i].CheckCondition()) return false;
+                    if (conditions[i].requiredForEffects)
+                    {
+                        if (!conditions[i].CheckCondition())
+                            return false;
+                        hasRequiredCondition = true;
+                    }
                 }
-                return true;
+                if (!hasRequiredCondition) return isConditionsReady;
+                return hasRequiredCondition;
             }
         }
         protected abstract void Init();
 
         protected virtual void Start()
         {
-            Active(false);
+            Disable();
             if (activationType == ActivationType.OnStart) StartCoroutine(WaitDelay());
             Init();
 
@@ -74,13 +85,15 @@ namespace MyUnityPackage.Interactions
                 hasTrigger = false;
             }
 
-        }
+            if (conditions.Length > 0)
+                hasConditions = true;
 
+        }
 
         //Allow to trigger the function when a state has change
         public void OnConditionChanged(bool isInteracting)
         {
-            Debug.Log("OnConditionChanged");
+            Debug.Log("OnConditionChanged : isInteracting : " + isInteracting + " currentState " + currentState + " isRequiredConditionsActives " + isRequiredConditionsActives);
 
             if (isInteracting && currentState == CurrentState.None && isRequiredConditionsActives)
             {
@@ -135,7 +148,7 @@ namespace MyUnityPackage.Interactions
             {
                 effects[i].OnInteract();
             }
-            Active(false);
+
             currentState = CurrentState.onInteractActive;
             onInteractAction?.Invoke();
         }
@@ -173,25 +186,53 @@ namespace MyUnityPackage.Interactions
         protected void EndInteraction()
         {
             Debug.Log("EndInteraction : " + once);
-            if (!once) Active(true);
             currentState = CurrentState.None;
             OnExit();
-            if (true)
+
+            if (once)
             {
-                // to dos
+                Disable();
+            }
+            else
+            {
+                if (isConditionsReady && !hasTrigger)
+                {
+                    Debug.Log("OnInteract");
+                    OnInteract();
+                }
+                else if (isRequiredConditionsActives && hasConditions)
+                {
+                    Debug.Log("OnEnter");
+                    OnEnter();
+                }
             }
         }
 
-        public virtual void Active(bool pActive)
+        public virtual void Enable()
         {
             //Debug.Log("Active : " + pActive);
-            isEnable = pActive;
+            isEnable = true;
+            for (int i = 0; i < effects.Length; i++)
+            {
+                effects[i].OnEnable();
+            }
+            onEnableAction?.Invoke();
+        }
+
+        public virtual void Disable()
+        {
+            isEnable = false;
+            for (int i = 0; i < effects.Length; i++)
+            {
+                effects[i].OnDisable();
+            }
+            onDisableAction?.Invoke();
         }
 
         private IEnumerator WaitDelay()
         {
             yield return new WaitForSeconds(delay);
-            Active(true);
+            Enable();
         }
     }
 }
