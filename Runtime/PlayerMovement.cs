@@ -5,52 +5,54 @@ namespace MyUnityPackage.Interactions
 {
     public class PlayerMovement : MonoBehaviour
     {
-        Rigidbody rb;
+        [Header("Références")]
+        [SerializeField] private Transform cameraHolder; // Assigné dans l'inspecteur (pivot vertical)
+        [SerializeField] private Rigidbody rb;
 
-        float pitch;
-        float LookSensitivity = 0.4f;
-        float lookX = 0f;
-        float MaxPitch = 89f;
-        Transform vCam;
-        int maxBoucle = 20;
+        [Header("Paramètres")]
+        [SerializeField] private float lookSensitivity = 0.4f;
+        [SerializeField] private float maxPitch = 89f;
+        [SerializeField] private float moveSpeed = 10f;
+
+        private float pitch = 0f;
+        private float yaw = 0f;
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        private void Start()
         {
-
-
+            // Verrouille le curseur pour l'expérience FPS
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
+            if (rb == null) rb = GetComponent<Rigidbody>();
+            yaw = transform.eulerAngles.y;
 
-            rb = GetComponent<Rigidbody>();
+            // Abonnement aux événements InputManager
             ServiceLocator.GetService<InputManager>().OnPressDirection += Move;
             ServiceLocator.GetService<InputManager>().OnLookDirection += LookAround;
-            vCam = Camera.main.transform;
         }
 
+        // Déplacement du joueur (appelé par InputManager)
         private void Move(Vector2 move)
         {
-            Vector3 v = new Vector3(move.x / 5, 0, move.y / 5);
-            v = transform.TransformDirection(v);
-            rb.MovePosition(transform.position + v);
-            //transform.position += new Vector3(move.x / 5, 0, move.y / 5);
+            Vector3 direction = new Vector3(move.x, 0, move.y);
+            direction = transform.TransformDirection(direction);
+            rb.MovePosition(rb.position + direction * moveSpeed * Time.fixedDeltaTime);
         }
 
+        // Rotation FPS (appelée par InputManager)
         private void LookAround(Vector2 look)
         {
-            pitch += look.y * LookSensitivity * -1;
-            pitch = Mathf.Clamp(pitch, -MaxPitch, MaxPitch);
+            Debug.Log("Vector2 look : " + look);
+            yaw += look.x * lookSensitivity;
+            pitch -= look.y * lookSensitivity;
+            pitch = Mathf.Clamp(pitch, -maxPitch, maxPitch);
 
-            Quaternion quatCam/*vCam.localRotation */= Quaternion.Euler(pitch, 0, 0);
-
-            for (int i = 0; i < maxBoucle; i++)
-                vCam.localRotation = Quaternion.Slerp(vCam.localRotation, quatCam, 1f / maxBoucle);
-            //transform.Rotate(0, look.x * LookSensitivity, 0);
-
-            lookX += look.x * LookSensitivity;
-            Quaternion quat = Quaternion.Euler(0, lookX, 0);
-            for (int i = 0; i < maxBoucle; i++)
-                transform.rotation = Quaternion.Slerp(transform.rotation, quat, 1f / maxBoucle);
+            // Rotation horizontale du joueur (yaw)
+            transform.rotation = Quaternion.Euler(0, yaw, 0);
+            // Rotation verticale de la caméra (pitch)
+            if (cameraHolder != null)
+                cameraHolder.localRotation = Quaternion.Euler(pitch, 0, 0);
         }
     }
 }

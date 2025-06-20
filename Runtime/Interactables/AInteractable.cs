@@ -128,7 +128,7 @@ namespace MyUnityPackage.Interactions
 
         protected virtual void OnEnterTrigger()
         {
-            Debug.Log("OnEnter triger");
+            Debug.Log("OnEnter trigger");
             // check condition pour afficher les manquantes
 
         }
