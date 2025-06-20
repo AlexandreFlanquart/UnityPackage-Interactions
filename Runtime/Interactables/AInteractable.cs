@@ -22,7 +22,7 @@ namespace MyUnityPackage.Interactions
         protected event Action onExitAction;
         protected event Action onInteractAction;
 
-        private bool isEnable = false;
+        protected bool isEnable = false;
         protected bool hasTrigger = false;
         protected bool hasConditions = false;
 

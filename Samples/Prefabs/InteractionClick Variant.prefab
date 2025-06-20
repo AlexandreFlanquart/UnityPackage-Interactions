@@ -82,6 +82,10 @@ PrefabInstance:
       propertyPath: requiredForEffects
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2818074311361984265, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: m_Name
+      value: Color Effect
+      objectReference: {fileID: 0}
     - target: {fileID: 3079566932112316646, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_Name
       value: InteractionClick Variant
@@ -306,6 +310,14 @@ PrefabInstance:
       propertyPath: 'conditions.Array.data[1]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: 'effects.Array.data[0]'
+      value: 
+      objectReference: {fileID: 5779115828226184630}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: 'conditions.Array.data[0]'
+      value: 
+      objectReference: {fileID: 6447316157950898292}
     - target: {fileID: 8916557374565898331, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -322,6 +334,7 @@ PrefabInstance:
     - {fileID: 8970303709504890713, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
     - {fileID: 8916557374565898331, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
     - {fileID: 8478632943956400566, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+    - {fileID: 8375954270541058294, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
     m_RemovedGameObjects:
     - {fileID: 236837245578612234, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
     m_AddedGameObjects:
@@ -353,9 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e52a4f22d195f24fb181a9e91370c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mesh: {fileID: 2146278155735159850}
-  rangeHandler: {fileID: 0}
-  isColliding: 1
+  mesh: {fileID: 5092826432887999938}
 --- !u!1 &1380615505234437063 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3953787814361696390, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
@@ -395,13 +406,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c0c23e64e633784bad80fc630b989e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!23 &2146278155735159850 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 4053063680452951915, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
-  m_PrefabInstance: {fileID: 2735447959249955649}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4207946147566595358 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2275412740569237087, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 2735447959249955649}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &5092826432887999938 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7159344368341182083, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
   m_PrefabInstance: {fileID: 2735447959249955649}
   m_PrefabAsset: {fileID: 0}

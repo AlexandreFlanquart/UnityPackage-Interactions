@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     private int nbInteractionDone = 0;
 
-    void Start()
+    void Awake()
     {
         ServiceLocator.AddService<GameManager>(gameObject);
     }
