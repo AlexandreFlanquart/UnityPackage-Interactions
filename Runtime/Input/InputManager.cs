@@ -13,6 +13,7 @@ namespace MyUnityPackage.Toolkit
     public class InputManager : MonoBehaviour
     {
         public event Action<Vector2> OnPressDirection;
+        public event Action<Vector2> OnLookDirection;
         public event Action OnPressInteract;
         public event Action OnSubmit;
         public event Action<bool> OnSprintPressed;
@@ -20,6 +21,7 @@ namespace MyUnityPackage.Toolkit
         private PlayerControls playerControls;
         private PlayerInput playerInput;
         private Vector2 movementInput = Vector2.zero;
+        private Vector2 lookInput = Vector2.zero;
 
         private void Awake()
         {
@@ -35,6 +37,8 @@ namespace MyUnityPackage.Toolkit
             playerControls.Player.Enable();
             playerControls.Player.Move.performed += MovementPerformed;
             playerControls.Player.Move.canceled += MovementCanceled;
+            playerControls.Player.Look.performed += LookPerformed;
+            playerControls.Player.Look.canceled += LookCanceled;
             playerControls.Player.Interact.performed += InteractPerformed;
             playerControls.Player.Sprint.performed += SprintPerformed;
             playerControls.Player.Sprint.canceled += SprintCanceled;
@@ -74,6 +78,18 @@ namespace MyUnityPackage.Toolkit
             movementInput = Vector2.zero;
         }
 
+        private void LookPerformed(InputAction.CallbackContext context)
+        {
+            // Debug.Log("look Performed : " + context.ReadValue<Vector2>());
+            lookInput = context.ReadValue<Vector2>();
+        }
+
+        private void LookCanceled(InputAction.CallbackContext context)
+        {
+            //Debug.Log("look Canceled");
+            lookInput = Vector2.zero;
+        }
+
         private void InteractPerformed(InputAction.CallbackContext context)
         {
             Debug.Log("Interact Performed");
@@ -103,6 +119,10 @@ namespace MyUnityPackage.Toolkit
             if (movementInput != Vector2.zero)
             {
                 OnPressDirection?.Invoke(movementInput);
+            }
+            if (lookInput != Vector2.zero)
+            {
+                OnLookDirection?.Invoke(lookInput);
             }
 
         }
