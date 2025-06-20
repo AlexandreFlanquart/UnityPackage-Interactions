@@ -8,9 +8,11 @@ namespace MyUnityPackage.Interactions
         Rigidbody rb;
 
         float pitch;
-        float LookSensitivity = 0.5f;
+        float LookSensitivity = 0.4f;
+        float lookX = 0f;
         float MaxPitch = 89f;
         Transform vCam;
+        int maxBoucle = 20;
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
@@ -39,8 +41,16 @@ namespace MyUnityPackage.Interactions
             pitch += look.y * LookSensitivity * -1;
             pitch = Mathf.Clamp(pitch, -MaxPitch, MaxPitch);
 
-            vCam.localRotation = Quaternion.Euler(pitch, 0, 0);
-            transform.Rotate(0, look.x * LookSensitivity, 0);
+            Quaternion quatCam/*vCam.localRotation */= Quaternion.Euler(pitch, 0, 0);
+
+            for (int i = 0; i < maxBoucle; i++)
+                vCam.localRotation = Quaternion.Slerp(vCam.localRotation, quatCam, 1f / maxBoucle);
+            //transform.Rotate(0, look.x * LookSensitivity, 0);
+
+            lookX += look.x * LookSensitivity;
+            Quaternion quat = Quaternion.Euler(0, lookX, 0);
+            for (int i = 0; i < maxBoucle; i++)
+                transform.rotation = Quaternion.Slerp(transform.rotation, quat, 1f / maxBoucle);
         }
     }
 }
