@@ -11,7 +11,7 @@ namespace MyUnityPackage.Interactions
         [SerializeField] private float delay = default;
         [SerializeField] private bool once = true;
 
-        [SerializeField] private AInteractionTrigger interactionTrigger;
+        [SerializeField] protected AInteractionTrigger interactionTrigger;
         [SerializeField] private AEffect[] effects;
         [SerializeField] private ACondition[] conditions;
 
@@ -29,7 +29,7 @@ namespace MyUnityPackage.Interactions
         private enum ActivationType { OnStart, Manual }
 
         private enum CurrentState { None, onEnterActive, onInteractActive };
-        private bool isConditionsReady
+        protected bool isConditionsReady
         {
             get
             {
@@ -41,7 +41,7 @@ namespace MyUnityPackage.Interactions
                 return isReady;
             }
         }
-        private bool isRequiredConditionsActives
+        protected bool isRequiredConditionsActives
         {
             get
             {

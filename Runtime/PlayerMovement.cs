@@ -17,10 +17,7 @@ namespace MyUnityPackage.Interactions
         void Start()
         {
 
-
-            Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-
 
             rb = GetComponent<Rigidbody>();
             ServiceLocator.GetService<InputManager>().OnPressDirection += Move;

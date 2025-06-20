@@ -557,6 +557,9 @@ MonoBehaviour:
   conditions:
   - {fileID: 2441087577581692044}
   animatedObj: {fileID: 2505405304214583198}
+  enableText: {fileID: 0}
+  requiredConditionsText: {fileID: 0}
+  allConditionsText: {fileID: 0}
 --- !u!1 &3291846172106559567
 GameObject:
   m_ObjectHideFlags: 0
@@ -944,7 +947,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: trigger =>
+  m_text: trigger => Mouse Click
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

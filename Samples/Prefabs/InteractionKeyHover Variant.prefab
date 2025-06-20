@@ -76,6 +76,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 31913447064608028, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: m_text
+      value: trigger => Press Keyboard
+      objectReference: {fileID: 0}
     - target: {fileID: 2207091106609145020, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -273,6 +277,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3670976346078457885}
     - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: enableText
+      value: 
+      objectReference: {fileID: 2625526004377575100}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: triggerText
+      value: 
+      objectReference: {fileID: 2868369685975159651}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: allConditionsText
+      value: 
+      objectReference: {fileID: 6022070988047418592}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: interactionTrigger
       value: 
       objectReference: {fileID: 4980576994011688138}
@@ -284,6 +300,10 @@ PrefabInstance:
       propertyPath: 'effects.Array.data[0]'
       value: 
       objectReference: {fileID: 4901362067790197235}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: requiredConditionsText
+      value: 
+      objectReference: {fileID: 3952619453789458434}
     - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: 'conditions.Array.data[1]'
       value: 
@@ -361,6 +381,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15dddd017d025334e9cc6c1f895d90d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2625526004377575100 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 274899801977229507, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 2864040960668749439}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2868369685975159651 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 31913447064608028, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 2864040960668749439}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3952619453789458434 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1253575643094785661, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 2864040960668749439}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4047889168956868640 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2275412740569237087, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
@@ -371,3 +424,14 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 7159344368341182083, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
   m_PrefabInstance: {fileID: 2864040960668749439}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6022070988047418592 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8371540504677239455, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 2864040960668749439}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

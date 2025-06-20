@@ -147,6 +147,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 31913447064608028, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: m_text
+      value: trigger => Press Keyboard
+      objectReference: {fileID: 0}
     - target: {fileID: 2441087577581692044, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: requiredForEffects
       value: 1
@@ -388,6 +392,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1768562619089729553}
     - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: enableText
+      value: 
+      objectReference: {fileID: 4232237455080492126}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: triggerText
+      value: 
+      objectReference: {fileID: 4114653434166673793}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: allConditionsText
+      value: 
+      objectReference: {fileID: 5568386337227429378}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: effects.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -407,6 +423,10 @@ PrefabInstance:
       propertyPath: 'effects.Array.data[1]'
       value: 
       objectReference: {fileID: 8809660884270211147}
+    - target: {fileID: 6887637818616262752, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: requiredConditionsText
+      value: 
+      objectReference: {fileID: 2886479727336325856}
     - target: {fileID: 8478632943956400566, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -494,11 +514,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mesh: {fileID: 6498790634871847454}
+--- !u!114 &2886479727336325856 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1253575643094785661, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 4137486870156188829}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3214192742362078571 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1580857091418079734, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
   m_PrefabInstance: {fileID: 4137486870156188829}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4114653434166673793 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 31913447064608028, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 4137486870156188829}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4232237455080492126 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 274899801977229507, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 4137486870156188829}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5568386337227429378 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8371540504677239455, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+  m_PrefabInstance: {fileID: 4137486870156188829}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!23 &6498790634871847454 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 7159344368341182083, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}

@@ -2,6 +2,7 @@ using System.Collections;
 using log4net.DateFormatter;
 using MyUnityPackage.Toolkit;
 using UnityEngine;
+using TMPro;
 
 namespace MyUnityPackage.Interactions
 {
@@ -13,10 +14,19 @@ namespace MyUnityPackage.Interactions
         private GameManager gameManager;
         private Animator animator;
 
+
+        //[SerializeField] TextMeshProUGUI triggerText;
+        [SerializeField] TextMeshProUGUI enableText;
+        [SerializeField] TextMeshProUGUI requiredConditionsText;
+        [SerializeField] TextMeshProUGUI allConditionsText;
+
+
         protected override void Start()
         {
             base.Start();
             gameManager = ServiceLocator.GetService<GameManager>();
+            //triggerText.text = "Trigger => " + interactionTrigger.GetType().Name;
+            UpdateTextConditions();
         }
 
         protected override void Init()
@@ -34,22 +44,28 @@ namespace MyUnityPackage.Interactions
         private void OnStartEnable()
         {
             animator.SetTrigger("Wait");
+            enableText.text = "isEnabled => true";
+            UpdateTextConditions();
         }
 
         private void OnStartDisable()
         {
             animator.SetTrigger("Disable");
+            enableText.text = "isEnabled => false";
+            UpdateTextConditions();
         }
 
         private void OnStartEnter()
         {
             animator.SetTrigger("Rotate");
+            UpdateTextConditions();
         }
 
         private void OnStartExit()
         {
             Debug.Log("OnStartExit");
             animator.SetTrigger("Wait");
+            UpdateTextConditions();
         }
 
         private void OnStartInteract()
@@ -67,6 +83,19 @@ namespace MyUnityPackage.Interactions
             yield return new WaitForSeconds(3);
             isInteractionDone = true;
             EndInteraction();
+            UpdateTextConditions();
+        }
+
+        private void UpdateTextConditions()
+        {
+            if (isConditionsReady)
+                allConditionsText.text = "AllConditionsReady => true";
+            else
+                allConditionsText.text = "AllConditionsReady => false";
+            if (isRequiredConditionsActives)
+                requiredConditionsText.text = "RequiredConditionsReady => true";
+            else
+                requiredConditionsText.text = "RequiredConditionsReady => false";
         }
     }
 }
