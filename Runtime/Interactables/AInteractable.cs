@@ -29,7 +29,9 @@ namespace MyUnityPackage.Interactions
         private enum ActivationType { OnStart, Manual }
 
         private enum CurrentState { None, onEnterActive, onInteractActive };
-        protected bool isConditionsReady
+
+        protected bool isConditionsReady;
+        protected bool IsConditionsReady
         {
             get
             {
@@ -41,7 +43,8 @@ namespace MyUnityPackage.Interactions
                 return isReady;
             }
         }
-        protected bool isRequiredConditionsActives
+        protected bool isRequiredConditionsActives;
+        protected bool IsRequiredConditionsActives
         {
             get
             {
@@ -93,6 +96,9 @@ namespace MyUnityPackage.Interactions
         //Allow to trigger the function when a state has change
         public void OnConditionChanged(bool isInteracting)
         {
+            isConditionsReady = IsConditionsReady;
+            isRequiredConditionsActives = IsRequiredConditionsActives;
+
             Debug.Log("OnConditionChanged : isInteracting : " + isInteracting + " currentState " + currentState + " isRequiredConditionsActives " + isRequiredConditionsActives);
 
             if (isInteracting && currentState == CurrentState.None && isRequiredConditionsActives)

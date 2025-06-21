@@ -14,8 +14,6 @@ namespace MyUnityPackage.Interactions
         private GameManager gameManager;
         private Animator animator;
 
-
-        //[SerializeField] TextMeshProUGUI triggerText;
         [SerializeField] TextMeshProUGUI enableText;
         [SerializeField] TextMeshProUGUI requiredConditionsText;
         [SerializeField] TextMeshProUGUI allConditionsText;
@@ -46,6 +44,7 @@ namespace MyUnityPackage.Interactions
 
         private void OnStartEnable()
         {
+            Debug.Log("animation enable wait");
             animator.SetTrigger("Wait");
             enableText.text = "isEnabled => true";
             UpdateTextConditions();
@@ -53,29 +52,43 @@ namespace MyUnityPackage.Interactions
 
         private void OnStartDisable()
         {
-            animator.SetTrigger("Disable");
+            Debug.Log("animation Disable");
+
+            StartCoroutine(AnimationDelay("Disable"));
+
             enableText.text = "isEnabled => false";
             UpdateTextConditions();
         }
 
         private void OnStartEnter()
         {
-            Debug.Log("OnStartEnter : Rotate");
-            animator.SetTrigger("Rotate");
+            Debug.Log("animation Rotate");
+
+            StartCoroutine(AnimationDelay("Rotate"));
             UpdateTextConditions();
+        }
+
+        private IEnumerator AnimationDelay(string animation)
+        {
+            yield return null;
+            animator.SetTrigger(animation);
         }
 
         private void OnStartExit()
         {
-            Debug.Log("OnStartExit : Wait");
-            animator.SetTrigger("Wait");
+            Debug.Log("animation exit wait");
+
+            Debug.Log("OnStartExit");
+            StartCoroutine(AnimationDelay("Wait"));
             UpdateTextConditions();
         }
 
         private void OnStartInteract()
         {
+            Debug.Log("animation Talk");
+
             gameManager.IncrementInteractionCount();
-            animator.SetTrigger("Talk");
+            StartCoroutine(AnimationDelay("Talk"));
 
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             float animationTime = stateInfo.normalizedTime * stateInfo.length;

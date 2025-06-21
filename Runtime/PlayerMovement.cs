@@ -12,7 +12,7 @@ namespace MyUnityPackage.Interactions
         [Header("Paramètres")]
         [SerializeField] private float lookSensitivity = 0.4f;
         [SerializeField] private float maxPitch = 89f;
-        [SerializeField] private float moveSpeed = 10f;
+        [SerializeField] private float moveSpeed = 20f;
 
         private float pitch = 0f;
         private float yaw = 0f;
@@ -43,7 +43,6 @@ namespace MyUnityPackage.Interactions
         // Rotation FPS (appelée par InputManager)
         private void LookAround(Vector2 look)
         {
-            Debug.Log("Vector2 look : " + look);
             yaw += look.x * lookSensitivity;
             pitch -= look.y * lookSensitivity;
             pitch = Mathf.Clamp(pitch, -maxPitch, maxPitch);
