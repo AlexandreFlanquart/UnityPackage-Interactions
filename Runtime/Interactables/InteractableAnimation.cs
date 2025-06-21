@@ -70,7 +70,8 @@ namespace MyUnityPackage.Interactions
 
         private IEnumerator AnimationDelay(string animation)
         {
-            yield return null;
+            yield return new WaitForSeconds(0.01f);
+            Debug.Log("animation" + animation);
             animator.SetTrigger(animation);
         }
 
