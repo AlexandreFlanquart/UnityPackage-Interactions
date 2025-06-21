@@ -80,6 +80,10 @@ PrefabInstance:
       propertyPath: m_text
       value: trigger => Press Keyboard
       objectReference: {fileID: 0}
+    - target: {fileID: 1253575643094785661, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: m_text
+      value: required conditions ready(no)
+      objectReference: {fileID: 0}
     - target: {fileID: 2207091106609145020, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -308,6 +312,10 @@ PrefabInstance:
       propertyPath: 'conditions.Array.data[1]'
       value: 
       objectReference: {fileID: 3670976346078457885}
+    - target: {fileID: 8371540504677239455, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: m_text
+      value: all conditions ready(range + mouse hover)
+      objectReference: {fileID: 0}
     - target: {fileID: 8916557374565898331, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_Enabled
       value: 0

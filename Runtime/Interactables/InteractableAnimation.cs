@@ -20,12 +20,15 @@ namespace MyUnityPackage.Interactions
         [SerializeField] TextMeshProUGUI requiredConditionsText;
         [SerializeField] TextMeshProUGUI allConditionsText;
 
-
+        private string allConditionString;
+        private string requiredConditionString;
         protected override void Start()
         {
             base.Start();
             gameManager = ServiceLocator.GetService<GameManager>();
             //triggerText.text = "Trigger => " + interactionTrigger.GetType().Name;
+            allConditionString = allConditionsText.text;
+            requiredConditionString = requiredConditionsText.text;
             UpdateTextConditions();
         }
 
@@ -57,13 +60,14 @@ namespace MyUnityPackage.Interactions
 
         private void OnStartEnter()
         {
+            Debug.Log("OnStartEnter : Rotate");
             animator.SetTrigger("Rotate");
             UpdateTextConditions();
         }
 
         private void OnStartExit()
         {
-            Debug.Log("OnStartExit");
+            Debug.Log("OnStartExit : Wait");
             animator.SetTrigger("Wait");
             UpdateTextConditions();
         }
@@ -81,6 +85,7 @@ namespace MyUnityPackage.Interactions
         private IEnumerator StopInteraction()
         {
             yield return new WaitForSeconds(3);
+            Debug.Log("StopInteraction");
             isInteractionDone = true;
             EndInteraction();
             UpdateTextConditions();
@@ -89,13 +94,13 @@ namespace MyUnityPackage.Interactions
         private void UpdateTextConditions()
         {
             if (isConditionsReady)
-                allConditionsText.text = "AllConditionsReady => true";
+                allConditionsText.text = allConditionString + "=> true";
             else
-                allConditionsText.text = "AllConditionsReady => false";
+                allConditionsText.text = allConditionString + "=> false";
             if (isRequiredConditionsActives)
-                requiredConditionsText.text = "RequiredConditionsReady => true";
+                requiredConditionsText.text = requiredConditionString + "=> true";
             else
-                requiredConditionsText.text = "RequiredConditionsReady => false";
+                requiredConditionsText.text = requiredConditionString + "=> false";
         }
     }
 }

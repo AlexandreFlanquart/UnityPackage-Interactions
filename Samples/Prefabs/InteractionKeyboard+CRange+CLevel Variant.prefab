@@ -59,6 +59,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InteractionKeyboard+CRange+CLevel Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 5568386337227429378, guid: 5d350d36a81d69e4f8355e0b59bca1a5, type: 3}
+      propertyPath: m_text
+      value: all conditions ready(level)
+      objectReference: {fileID: 0}
     - target: {fileID: 7421510495391952125, guid: 5d350d36a81d69e4f8355e0b59bca1a5, type: 3}
       propertyPath: conditions.Array.size
       value: 2

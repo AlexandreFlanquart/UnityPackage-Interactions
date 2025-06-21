@@ -151,6 +151,10 @@ PrefabInstance:
       propertyPath: m_text
       value: trigger => Mouse Click
       objectReference: {fileID: 0}
+    - target: {fileID: 1253575643094785661, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: m_text
+      value: required conditions ready(range)
+      objectReference: {fileID: 0}
     - target: {fileID: 2441087577581692044, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: requiredForEffects
       value: 1
@@ -411,6 +415,10 @@ PrefabInstance:
       propertyPath: requiredConditionsText
       value: 
       objectReference: {fileID: 2566583578600933953}
+    - target: {fileID: 8371540504677239455, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: m_text
+      value: all conditions ready(no)
+      objectReference: {fileID: 0}
     - target: {fileID: 8916557374565898331, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_Enabled
       value: 0
