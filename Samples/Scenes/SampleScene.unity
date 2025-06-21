@@ -2294,6 +2294,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: InteractionKeyHover
       objectReference: {fileID: 0}
+    - target: {fileID: 6237886941142584761, guid: fb40382ef915e274f84b6c4a28d20b9d, type: 3}
+      propertyPath: m_Size.z
+      value: 1.9672813
+      objectReference: {fileID: 0}
+    - target: {fileID: 6237886941142584761, guid: fb40382ef915e274f84b6c4a28d20b9d, type: 3}
+      propertyPath: m_Center.z
+      value: -0.029268265
+      objectReference: {fileID: 0}
     - target: {fileID: 7029205673429725155, guid: fb40382ef915e274f84b6c4a28d20b9d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 58.5
