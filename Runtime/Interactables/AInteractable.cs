@@ -25,6 +25,7 @@ namespace MyUnityPackage.Interactions
         protected bool isEnable = false;
         protected bool hasTrigger = false;
         protected bool hasConditions = false;
+        private bool isInteractionRunning = false;
 
         private enum ActivationType { OnStart, Manual }
 
@@ -149,7 +150,9 @@ namespace MyUnityPackage.Interactions
         public void OnInteract()
         {
             Debug.Log("OnInteract Interactable" + isEnable);
-            if (!isEnable) return;
+            if (!isEnable || isInteractionRunning) return;
+            Debug.Log("OnInteract isInteractionRunning" + isInteractionRunning);
+            isInteractionRunning = true;
             for (int i = 0; i < effects.Length; i++)
             {
                 effects[i].OnInteract();
@@ -157,6 +160,7 @@ namespace MyUnityPackage.Interactions
 
             currentState = CurrentState.onInteractActive;
             onInteractAction?.Invoke();
+
         }
 
         //Function to call when the main condition can be call
@@ -212,6 +216,7 @@ namespace MyUnityPackage.Interactions
                     OnEnter();
                 }
             }
+            isInteractionRunning = false;
         }
 
         public virtual void Enable()

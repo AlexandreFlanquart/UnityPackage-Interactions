@@ -20,6 +20,8 @@ namespace MyUnityPackage.Interactions
 
         private string allConditionString;
         private string requiredConditionString;
+
+        //public float animationTime = 1f;
         protected override void Start()
         {
             base.Start();
@@ -89,16 +91,13 @@ namespace MyUnityPackage.Interactions
 
             gameManager.IncrementInteractionCount();
             StartCoroutine(AnimationDelay("Talk"));
-
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            float animationTime = stateInfo.normalizedTime * stateInfo.length;
-            StartCoroutine(StopInteraction());
         }
 
-        private IEnumerator StopInteraction()
+        public IEnumerator StopInteraction(float animationTime)
         {
-            yield return new WaitForSeconds(3);
-            Debug.Log("StopInteraction");
+            Debug.Log("StopInteractionAnimationtime " + animationTime);
+            yield return new WaitForSeconds(animationTime);
+
             isInteractionDone = true;
             EndInteraction();
             UpdateTextConditions();
