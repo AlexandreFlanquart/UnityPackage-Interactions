@@ -324,7 +324,7 @@ GameObject:
   - component: {fileID: 6832936762304677972}
   - component: {fileID: 2145270995909909005}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -339,11 +339,11 @@ Transform:
   m_GameObject: {fileID: 2505405304214583198}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.638, z: 0}
-  m_LocalScale: {x: 0.23894861, y: 0.2, z: 0.4}
+  m_LocalPosition: {x: 0, y: 5.79, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6721036061176179202}
+  m_Father: {fileID: 3086505406932979825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2342621602547961958
 MeshFilter:
@@ -605,7 +605,7 @@ GameObject:
   - component: {fileID: 8181490040492848849}
   - component: {fileID: 1020289806253973881}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Support3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -623,9 +623,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.6, z: 0}
   m_LocalScale: {x: 4.185, y: 5, z: 2.5}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5996526321598315430}
-  - {fileID: 6777659680586934579}
+  m_Children: []
   m_Father: {fileID: 3086505406932979825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8924785564757530495
@@ -1045,16 +1043,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5824089155318236551}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.508}
-  m_LocalScale: {x: 0.23894861, y: 0.2, z: 0.4}
+  m_LocalPosition: {x: 0, y: 0, z: -1.27}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4244882825123368961}
-  m_Father: {fileID: 6721036061176179202}
+  m_Father: {fileID: 3086505406932979825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.005017899, y: -0}
+  m_AnchoredPosition: {x: -0.020999907, y: 2.6}
   m_SizeDelta: {x: 4, y: 4.9277}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3411464829324874656
@@ -1286,5 +1284,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6721036061176179202}
+  - {fileID: 5996526321598315430}
+  - {fileID: 6777659680586934579}
   m_Father: {fileID: 5058632293965635996}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -1,3 +1,4 @@
+using MyUnityPackage.Toolkit;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -18,11 +19,24 @@ namespace MyUnityPackage.Interactions
             }
         }
 
+        private GameManager gameManager;
+
+        public void Awake()
+        {
+            gameManager = ServiceLocator.GetService<GameManager>();
+            gameManager.OnLevelChange += OnLevelChange;
+        }
+
         public override bool CheckCondition()
         {
             bool condition = _level >= 10;
             Debug.Log("condition : " + condition);
             return condition;
+        }
+
+        private void OnLevelChange(int lvl)
+        {
+            Level = lvl;
         }
 
         [Button]
