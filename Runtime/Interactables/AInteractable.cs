@@ -192,13 +192,12 @@ namespace MyUnityPackage.Interactions
 
             onExitAction?.Invoke();
         }
-
-        protected void EndInteraction()
+        protected IEnumerator EndInteractionCoroutine()
         {
             Debug.Log("EndInteraction : " + once);
             currentState = CurrentState.None;
             OnExit();
-
+            yield return null;
             if (once)
             {
                 Disable();
@@ -217,6 +216,10 @@ namespace MyUnityPackage.Interactions
                 }
             }
             isInteractionRunning = false;
+        }
+        protected void EndInteraction()
+        {
+            StartCoroutine(EndInteractionCoroutine());
         }
 
         public virtual void Enable()
