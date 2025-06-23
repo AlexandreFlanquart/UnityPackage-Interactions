@@ -26,17 +26,18 @@ public class GameManager : MonoBehaviour
 
     public void SetLevel(int lvl)
     {
+        Debug.Log("Lvl " + lvl);
         currentLvl = lvl;
         levelText.text = lvl.ToString();
         OnLevelChange?.Invoke(currentLvl);
     }
     public void AddLevel()
     {
-        SetLevel(currentLvl++);
+        SetLevel(++currentLvl);
     }
     public void RemoveLevel()
     {
-        SetLevel(currentLvl--);
+        SetLevel(--currentLvl);
     }
 
 

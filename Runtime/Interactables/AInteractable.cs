@@ -92,6 +92,8 @@ namespace MyUnityPackage.Interactions
             if (conditions.Length > 0)
                 hasConditions = true;
 
+            isConditionsReady = IsConditionsReady;
+            isRequiredConditionsActives = IsRequiredConditionsActives;
         }
 
         //Allow to trigger the function when a state has change
