@@ -20,15 +20,17 @@ public class GameManager : MonoBehaviour
 
     public void IncrementInteractionCount()
     {
+        const string lvlInteraction = "Interactions : ";
         nbInteractionDone++;
-        interactionDoneText.text = nbInteractionDone.ToString();
+        interactionDoneText.text = lvlInteraction + nbInteractionDone.ToString();
     }
 
     public void SetLevel(int lvl)
     {
         Debug.Log("Lvl " + lvl);
         currentLvl = lvl;
-        levelText.text = lvl.ToString();
+        const string lvlText = "Level : ";
+        levelText.text = lvlText + lvl.ToString();
         OnLevelChange?.Invoke(currentLvl);
     }
     public void AddLevel()
