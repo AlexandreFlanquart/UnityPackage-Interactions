@@ -13,14 +13,18 @@ public class GameManager : MonoBehaviour
     private int currentLvl = 0;
     public event Action<int> OnLevelChange;
 
+    const string lvlInteraction = "Interactions : ";
+    const string lvlText = "Level : ";
     void Awake()
     {
         ServiceLocator.AddService<GameManager>(gameObject);
+
+        interactionDoneText.text = lvlInteraction + nbInteractionDone.ToString();
+        levelText.text = lvlText + currentLvl;
     }
 
     public void IncrementInteractionCount()
     {
-        const string lvlInteraction = "Interactions : ";
         nbInteractionDone++;
         interactionDoneText.text = lvlInteraction + nbInteractionDone.ToString();
     }
@@ -29,8 +33,8 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Lvl " + lvl);
         currentLvl = lvl;
-        const string lvlText = "Level : ";
-        levelText.text = lvlText + lvl.ToString();
+
+        levelText.text = lvlText + currentLvl.ToString();
         OnLevelChange?.Invoke(currentLvl);
     }
     public void AddLevel()

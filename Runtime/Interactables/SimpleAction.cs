@@ -7,7 +7,7 @@ namespace MyUnityPackage.Interactions
     public class SimpleAction : AInteractable
     {
         [SerializeField] protected UnityEvent OnInteractionStarted = default;
-
+        [SerializeField] protected float actionDelay = 1f;
         protected override void Init()
         {
             onInteractAction += StartSimpleAction;
@@ -19,12 +19,12 @@ namespace MyUnityPackage.Interactions
             {
                 Debug.Log("StartSimpleAction");
                 OnInteractionStarted?.Invoke();
-                StartCoroutine(WaitDelay(3));
+                StartCoroutine(WaitDelay(actionDelay));
             }
         }
 
 
-        private IEnumerator WaitDelay(int delay)
+        private IEnumerator WaitDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
             EndInteraction();
