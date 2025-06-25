@@ -4,9 +4,7 @@
   "displayName": "UnityPackage-Interactions",
   "description": "UnityPackage Interactions",
   "unity": "6000.0",
-  "dependencies": {
-    "MyUnityPackage.Toolkit": "1.0.1"
-  },
+  "dependencies": {},
   "author": {
     "name": "Alexandre Flanquart"
   },

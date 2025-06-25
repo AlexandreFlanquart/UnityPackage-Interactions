@@ -1,0 +1,5 @@
+{
+    "dependencies": {
+        "com.myunitypackage.toolkit": "https://github.com/AlexandreFlanquart/UnityPackage-Toolkit.git"
+    }
+}
