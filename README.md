@@ -1,4 +1,4 @@
-# MYUNITYPACKAGE-SCORM-UNITY
+# MYUNITYPACKAGE-Interactions-UNITY
 Package for Unity.
 
 <br>
