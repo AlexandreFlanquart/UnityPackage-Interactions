@@ -9,6 +9,8 @@ namespace MyUnityPackage.Interactions
 {
     public class RangeChecker : MonoBehaviour
     {
+
+        static RangeChecker instance;
         [SerializeField] private Transform player;
         [SerializeField] private float checkFrequency = 0.1f;
 
@@ -20,10 +22,16 @@ namespace MyUnityPackage.Interactions
         // Start is called before the first frame update
         void Start()
         {
-            ServiceLocator.AddService<RangeChecker>(gameObject);
+            if (instance == null)
+                instance = this;
+            //ServiceLocator.AddService<RangeChecker>(gameObject);
             StartCalculating();
         }
 
+        public static RangeChecker GetInstance()
+        {
+            return instance;
+        }
         public void StartCalculating()
         {
             StartCoroutine(Calculating());

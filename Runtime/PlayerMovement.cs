@@ -28,8 +28,8 @@ namespace MyUnityPackage.Interactions
             yaw = transform.eulerAngles.y;
 
             // Abonnement aux événements InputManager
-            ServiceLocator.GetService<InputManager>().OnPressDirection += Move;
-            ServiceLocator.GetService<InputManager>().OnLookDirection += LookAround;
+            InputManager.GetInstance().OnPressDirection += Move;
+            InputManager.GetInstance().OnLookDirection += LookAround;
         }
 
         // Déplacement du joueur (appelé par InputManager)

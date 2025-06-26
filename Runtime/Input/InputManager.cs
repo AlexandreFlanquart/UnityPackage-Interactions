@@ -22,10 +22,12 @@ namespace MyUnityPackage.Toolkit
         private PlayerInput playerInput;
         private Vector2 movementInput = Vector2.zero;
         private Vector2 lookInput = Vector2.zero;
-
+        static InputManager instance;
         private void Awake()
         {
-            ServiceLocator.AddService<InputManager>(gameObject);
+            if (instance == null)
+                instance = this;
+            //ServiceLocator.AddService<InputManager>(gameObject);
         }
 
         private void Start()
@@ -48,6 +50,10 @@ namespace MyUnityPackage.Toolkit
 
         }
 
+        public static InputManager GetInstance()
+        {
+            return instance;
+        }
         public void switchActionMap(ActionMap actionMap)
         {
             Debug.Log("Switching to action map: " + actionMap);

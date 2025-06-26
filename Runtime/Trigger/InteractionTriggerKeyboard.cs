@@ -12,7 +12,7 @@ namespace MyUnityPackage.Interactions
 
         void Start()
         {
-            ServiceLocator.GetService<InputManager>().OnPressInteract += OnInteract;
+            InputManager.GetInstance().OnPressInteract += OnInteract;
         }
         void OnInteract()
         {

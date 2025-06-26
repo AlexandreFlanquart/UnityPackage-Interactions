@@ -25,7 +25,7 @@ namespace MyUnityPackage.Interactions
         protected override void Start()
         {
             base.Start();
-            gameManager = ServiceLocator.GetService<GameManager>();
+            gameManager = GameManager.GetInstance();
             //triggerText.text = "Trigger => " + interactionTrigger.GetType().Name;
             allConditionString = allConditionsText.text;
             requiredConditionString = requiredConditionsText.text;

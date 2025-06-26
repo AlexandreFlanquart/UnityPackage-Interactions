@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
+    static GameManager instance;
     [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] TextMeshProUGUI interactionDoneText;
 
@@ -17,12 +18,18 @@ public class GameManager : MonoBehaviour
     const string lvlText = "Level : ";
     void Awake()
     {
-        ServiceLocator.AddService<GameManager>(gameObject);
+        if (instance == null)
+            instance = this;
+        //ServiceLocator.AddService<GameManager>(gameObject);
 
         interactionDoneText.text = lvlInteraction + nbInteractionDone.ToString();
         levelText.text = lvlText + currentLvl;
     }
 
+    public static GameManager GetInstance()
+    {
+        return instance;
+    }
     public void IncrementInteractionCount()
     {
         nbInteractionDone++;

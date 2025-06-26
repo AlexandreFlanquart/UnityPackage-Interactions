@@ -19,7 +19,7 @@ namespace MyUnityPackage.Interactions
 
         void Start()
         {
-            inputManager = ServiceLocator.GetService<InputManager>();
+            inputManager = InputManager.GetInstance();
             interactAction = () =>
             {
                 Debug.Log("Interact");

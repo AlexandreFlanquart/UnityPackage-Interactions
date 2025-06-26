@@ -23,7 +23,7 @@ namespace MyUnityPackage.Interactions
 
         public void Awake()
         {
-            gameManager = ServiceLocator.GetService<GameManager>();
+            gameManager = GameManager.GetInstance();//ServiceLocator.GetService<GameManager>();
             gameManager.OnLevelChange += OnLevelChange;
         }
 

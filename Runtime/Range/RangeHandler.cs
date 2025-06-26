@@ -20,12 +20,6 @@ namespace MyUnityPackage.Interactions
         public float MaxDistance { get => maxDistance; }
         public bool InRange { get => inRange; }
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
-        {
-
-        }
-
         void OnEnable()
         {
             if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto)
@@ -44,17 +38,17 @@ namespace MyUnityPackage.Interactions
 
         public void RegisterToRangeChecker()
         {
-            ServiceLocator.GetService<RangeChecker>().AddRangeElement(this);
+            RangeChecker.GetInstance().AddRangeElement(this);
         }
 
         public void UnregisterFromRangeChecker()
         {
-            ServiceLocator.GetService<RangeChecker>().RemoveRangeElement(this);
+            RangeChecker.GetInstance().RemoveRangeElement(this);
         }
 
         public void ForceCalculateRange()
         {
-            ServiceLocator.GetService<RangeChecker>().CalculateRange(this);
+            RangeChecker.GetInstance().CalculateRange(this);
         }
 
         public void CheckRange(float pDistance)
