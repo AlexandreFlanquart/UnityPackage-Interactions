@@ -20,6 +20,14 @@ namespace MyUnityPackage.Interactions
         public float MaxDistance { get => maxDistance; }
         public bool InRange { get => inRange; }
 
+
+        void Start()
+        {
+            if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto)
+            {
+                RegisterToRangeChecker();
+            }
+        }
         void OnEnable()
         {
             if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto)
@@ -38,7 +46,10 @@ namespace MyUnityPackage.Interactions
 
         public void RegisterToRangeChecker()
         {
-            RangeChecker.GetInstance().AddRangeElement(this);
+            Debug.Log("Register to range checker");
+            RangeChecker rangeChecker = RangeChecker.GetInstance();
+            if (rangeChecker != null)
+                RangeChecker.GetInstance().AddRangeElement(this);
         }
 
         public void UnregisterFromRangeChecker()

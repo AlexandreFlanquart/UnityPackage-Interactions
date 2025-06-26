@@ -19,12 +19,15 @@ namespace MyUnityPackage.Interactions
 
         public bool forceCheck = false;
 
-        // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
             if (instance == null)
                 instance = this;
-            //ServiceLocator.AddService<RangeChecker>(gameObject);
+            Debug.Log("range checker " + instance.name);
+        }
+        // Start is called before the first frame update
+        void Start()
+        {
             StartCalculating();
         }
 

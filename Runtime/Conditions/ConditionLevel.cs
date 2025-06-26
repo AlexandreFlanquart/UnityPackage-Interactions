@@ -21,11 +21,12 @@ namespace MyUnityPackage.Interactions
 
         private GameManager gameManager;
 
-        public void Awake()
+        public void Start()
         {
             gameManager = GameManager.GetInstance();//ServiceLocator.GetService<GameManager>();
             gameManager.OnLevelChange += OnLevelChange;
         }
+
 
         public override bool CheckCondition()
         {
