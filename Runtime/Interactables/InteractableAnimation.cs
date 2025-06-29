@@ -1,6 +1,4 @@
 using System.Collections;
-using log4net.DateFormatter;
-using MyUnityPackage.Toolkit;
 using UnityEngine;
 using TMPro;
 
