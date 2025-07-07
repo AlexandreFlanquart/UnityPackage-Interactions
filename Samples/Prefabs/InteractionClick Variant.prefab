@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ca425c04f82d4408ef6e47d797e40a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shouldBeTrue: 1
   requiredForEffects: 1
 --- !u!65 &2345265442301617721
 BoxCollider:
@@ -361,6 +360,10 @@ PrefabInstance:
       propertyPath: 'conditions.Array.data[0]'
       value: 
       objectReference: {fileID: 6447316157950898292}
+    - target: {fileID: 7159344368341182083, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 92bb3819ff998484db7568e5881894e7, type: 2}
     - target: {fileID: 8371540504677239455, guid: 1dd7670e900676b4da92ec0abaf3dad4, type: 3}
       propertyPath: m_text
       value: all conditions (no)
