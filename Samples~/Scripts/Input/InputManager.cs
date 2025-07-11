@@ -14,8 +14,6 @@ public class InputManager : MonoBehaviour
     public event Action<Vector2> OnPressDirection;
     public event Action<Vector2> OnLookDirection;
     public event Action OnPressInteract;
-    public event Action OnSubmit;
-    public event Action<bool> OnSprintPressed;
 
     private PlayerControls playerControls;
     private PlayerInput playerInput;

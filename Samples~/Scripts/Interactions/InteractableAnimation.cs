@@ -7,7 +7,7 @@ namespace MyUnityPackage.Interactions
     public class InteractableAnimation : AInteractable
     {
         [SerializeField] private GameObject animatedObj;
-        private bool isInteractionDone = false;
+      
 
         private GameManager gameManager;
         private Animator animator;
@@ -98,7 +98,7 @@ namespace MyUnityPackage.Interactions
             Debug.Log("StopInteractionAnimationtime " + animationTime);
             yield return new WaitForSeconds(animationTime);
 
-            isInteractionDone = true;
+            
             EndInteraction();
             UpdateTextConditions();
         }
