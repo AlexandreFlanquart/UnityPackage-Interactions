@@ -1,6 +1,6 @@
 {
   "name": "com.myunitypackage.interactions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "UnityPackage-Interactions",
   "description": "UnityPackage Interactions",
   "unity": "6000.0",

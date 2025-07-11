@@ -1,3 +1,3 @@
-## [1.0.0] - 2025-07-01
-### First Release
-- Add Interactions system
+## [1.0.1] - 2025-07-11
+### New Release
+- Fix samples
