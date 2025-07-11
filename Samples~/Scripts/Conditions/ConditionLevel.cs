@@ -3,11 +3,11 @@ using MyUnityPackage.Interactions;
 
 public class ConditionLevel : ACondition
 {
-    private GameManager gameManager;
+    private GameManagerInteractions gameManager;
 
     public void Start()
     {
-        gameManager = GameManager.GetInstance();
+        gameManager = GameManagerInteractions.GetInstance();
         gameManager.OnLevelChange += OnLevelChanged;
     }
 

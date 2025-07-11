@@ -2,9 +2,9 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManagerInteractions : MonoBehaviour
 {
-    static GameManager instance;
+    static GameManagerInteractions instance;
     [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] TextMeshProUGUI interactionDoneText;
 
@@ -29,13 +29,12 @@ public class GameManager : MonoBehaviour
     {
         if (instance == null)
             instance = this;
-        //ServiceLocator.AddService<GameManager>(gameObject);
 
         interactionDoneText.text = lvlInteraction + nbInteractionDone.ToString();
         levelText.text = lvlText + CurrentLvl;
     }
 
-    public static GameManager GetInstance()
+    public static GameManagerInteractions GetInstance()
     {
         return instance;
     }

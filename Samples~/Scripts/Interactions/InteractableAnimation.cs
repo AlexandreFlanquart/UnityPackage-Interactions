@@ -9,7 +9,7 @@ namespace MyUnityPackage.Interactions
         [SerializeField] private GameObject animatedObj;
       
 
-        private GameManager gameManager;
+        private GameManagerInteractions gameManager;
         private Animator animator;
 
         [SerializeField] TextMeshProUGUI enableText;
@@ -23,7 +23,7 @@ namespace MyUnityPackage.Interactions
         protected override void Start()
         {
             base.Start();
-            gameManager = GameManager.GetInstance();
+            gameManager = GameManagerInteractions.GetInstance();
             //triggerText.text = "Trigger => " + interactionTrigger.GetType().Name;
             allConditionString = allConditionsText.text;
             requiredConditionString = requiredConditionsText.text;
