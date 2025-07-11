@@ -2,7 +2,7 @@
   "name": "com.myunitypackage.interactions",
   "version": "1.0.1",
   "displayName": "UnityPackage-Interactions",
-  "description": "UnityPackage Interactions",
+  "description": "UnityPackage Interactions show multiple type of interactions.",
   "unity": "6000.0",
   "dependencies": {
   },
@@ -17,7 +17,7 @@
   "samples": [
     {
       "displayName": "SampleScene",
-      "description": "SampleScene",
+      "description": "Example usage",
       "path": "Samples~"
     }
   ]
