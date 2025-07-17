@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using PlasticGui.Help.Conditions;
 using UnityEngine;
 
 namespace MyUnityPackage.Interactions
