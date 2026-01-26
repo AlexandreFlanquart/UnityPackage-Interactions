@@ -1,3 +1,9 @@
+## [1.0.2] - 2026-01-26
+### Added
+- Sample scene 2D
+- 2D interactions
+- Documentaions & comments
+
 ## [1.0.1] - 2025-07-11
 ### Fixed
 - Fix samples
@@ -15,5 +21,6 @@
 - Sample
 - Prefab
 
+[1.0.2]:https://github.com/AlexandreFlanquart/UnityPackage-Interactions/releases/tag/1.0.2
 [1.0.1]:https://github.com/AlexandreFlanquart/UnityPackage-Interactions/releases/tag/1.0.1
 [1.0.0]:https://github.com/AlexandreFlanquart/UnityPackage-Interactions/releases/tag/1.0.0

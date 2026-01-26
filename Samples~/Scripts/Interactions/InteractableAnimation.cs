@@ -2,13 +2,12 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 
-namespace MyUnityPackage.Interactions
+namespace MyUnityPackage.Interactions.Samples
 {
     public class InteractableAnimation : AInteractable
     {
         [SerializeField] private GameObject animatedObj;
       
-
         private GameManagerInteractions gameManager;
         private Animator animator;
 
@@ -32,8 +31,10 @@ namespace MyUnityPackage.Interactions
 
         protected override void Init()
         {
-            Debug.Log("Init");
-            animator = animatedObj.GetComponent<Animator>();
+            if (animatedObj != null)
+                animator = animatedObj.GetComponent<Animator>();
+            else
+                Debug.LogWarning("InteractableAnimation: animatedObj is null");
 
             onEnterAction += OnStartEnter;
             onExitAction += OnStartExit;
@@ -44,60 +45,53 @@ namespace MyUnityPackage.Interactions
 
         private void OnStartEnable()
         {
-            Debug.Log("animation enable wait");
-            animator.SetTrigger("Wait");
-            enableText.text = "isEnabled => true";
+            if (animator != null) animator.SetTrigger("Wait");
+            if (enableText != null) enableText.text = "isEnabled => true";
             UpdateTextConditions();
         }
 
         private void OnStartDisable()
         {
-            Debug.Log("animation Disable");
+            if (animator != null) animator.SetTrigger("Disable");
 
-            StartCoroutine(AnimationDelay("Disable"));
-
-            enableText.text = "isEnabled => false";
+            if (enableText != null) enableText.text = "isEnabled => false";
             UpdateTextConditions();
         }
 
         private void OnStartEnter()
         {
-            Debug.Log("animation Rotate");
-
-            StartCoroutine(AnimationDelay("Rotate"));
+            if (animator != null) animator.SetTrigger("Rotate");
             UpdateTextConditions();
-        }
-
-        private IEnumerator AnimationDelay(string animation)
-        {
-            yield return new WaitForSeconds(0.1f);
-            Debug.Log("animation" + animation);
-            animator.SetTrigger(animation);
-            //animator.Update(0f);
         }
 
         private void OnStartExit()
         {
-            Debug.Log("animation exit wait");
-
-            Debug.Log("OnStartExit");
-            StartCoroutine(AnimationDelay("Wait"));
+            if (animator != null) animator.SetTrigger("Wait");
             UpdateTextConditions();
         }
 
         private void OnStartInteract()
         {
-            Debug.Log("animation Talk");
-
             gameManager.IncrementInteractionCount();
-            StartCoroutine(AnimationDelay("Talk"));
+            if (animator != null)
+            {
+                animator.SetTrigger("Talk");
+            }
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            onEnterAction -= OnStartEnter;
+            onExitAction -= OnStartExit;
+            onInteractAction -= OnStartInteract;
+            onEnableAction -= OnStartEnable;
+            onDisableAction -= OnStartDisable;
         }
 
         public IEnumerator StopInteraction(float animationTime)
         {
-            Debug.Log("StopInteractionAnimationtime " + animationTime);
             yield return new WaitForSeconds(animationTime);
-
             
             EndInteraction();
             UpdateTextConditions();

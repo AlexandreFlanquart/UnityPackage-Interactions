@@ -2,7 +2,9 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class GameManagerInteractions : MonoBehaviour
+namespace MyUnityPackage.Interactions.Samples
+{
+    public class GameManagerInteractions : MonoBehaviour
 {
     static GameManagerInteractions instance;
     [SerializeField] TextMeshProUGUI levelText;
@@ -62,4 +64,5 @@ public class GameManagerInteractions : MonoBehaviour
     }
 
 
+}
 }

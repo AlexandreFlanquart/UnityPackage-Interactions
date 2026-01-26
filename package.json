@@ -2,7 +2,7 @@
   "name": "com.myunitypackage.interactions",
   "version": "1.0.1",
   "displayName": "UnityPackage-Interactions",
-  "description": "UnityPackage Interactions show multiple type of interactions.",
+  "description": "A comprehensive Unity package providing a flexible and extensible interaction system. Supports multiple interaction types including click, hover, and custom interactions with easy-to-use components and event handlers for enhanced user experience in Unity applications.",
   "unity": "6000.0",
   "dependencies": {
   },
@@ -16,8 +16,8 @@
   ],
   "samples": [
     {
-      "displayName": "SampleScene",
-      "description": "Example usage",
+      "displayName": "Interaction Examples",
+      "description": "Comprehensive sample scenes demonstrating various interaction types, component configurations, and event handling patterns. Includes practical examples for click, hover, and custom interaction implementations to help you get started quickly.",
       "path": "Samples~"
     }
   ]

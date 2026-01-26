@@ -1,12 +1,13 @@
 using MyUnityPackage.Interactions;
 using UnityEngine;
 
-public class TalkingInteraction : StateMachineBehaviour
+namespace MyUnityPackage.Interactions.Samples
+{
+    public class TalkingInteraction : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log("OnStateExit");
         if (animator == null)
             return;
         InteractableAnimation interactableAnimation = animator.transform.parent.parent.GetComponent<InteractableAnimation>();
@@ -36,4 +37,5 @@ public class TalkingInteraction : StateMachineBehaviour
     //{
     //    // Implement code that sets up animation IK (inverse kinematics)
     //}
+}
 }

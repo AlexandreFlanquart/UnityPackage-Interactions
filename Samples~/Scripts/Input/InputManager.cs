@@ -2,8 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-public enum ActionMap
+namespace MyUnityPackage.Interactions.Samples
+{
+    public enum ActionMap
 {
     PLAYER,
     UI
@@ -29,7 +30,6 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("InputManager Start");
         playerInput = GetComponent<PlayerInput>();
         playerControls = new PlayerControls();
 
@@ -87,4 +87,5 @@ public class InputManager : MonoBehaviour
         }
 
     }
+}
 }

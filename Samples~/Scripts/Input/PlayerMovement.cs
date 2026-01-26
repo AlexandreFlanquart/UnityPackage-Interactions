@@ -1,6 +1,8 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+namespace MyUnityPackage.Interactions.Samples
+{
+    public class PlayerMovement : MonoBehaviour
 {
     [Header("Références")]
     [SerializeField] private Transform cameraHolder; // Assigné dans l'inspecteur (pivot vertical)
@@ -50,5 +52,6 @@ public class PlayerMovement : MonoBehaviour
         if (cameraHolder != null)
             cameraHolder.localRotation = Quaternion.Euler(pitch, 0, 0);
     }
+}
 }
 

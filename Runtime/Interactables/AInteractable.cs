@@ -4,53 +4,128 @@ using UnityEngine;
 
 namespace MyUnityPackage.Interactions
 {
+    /// <summary>
+    /// Abstract base class for all interactable objects in the Interaction System.
+    /// Manages the complete interaction lifecycle: activation, conditions, triggers, and effects.
+    /// 
+    /// Workflow:
+    /// 1. OnStart or Manual activation: interaction becomes enabled/disabled
+    /// 2. Conditions monitored: when all required conditions are met, interaction is ready
+    /// 3. Trigger detected: player enters zone, clicks, or collides (depends on trigger type)
+    /// 4. Interaction execute: all effects fire (enter, interact, exit) in sequence
+    /// 5. Once complete: interaction can repeat or disable (depends on "once" setting)
+    /// 
+    /// Key Events:
+    /// - onEnter: Player can interact (conditions met + player nearby)
+    /// - onInteract: Player actively interacts (click, collision, etc.)
+    /// - onExit: Player no longer can interact (left zone, condition failed)
+    /// 
+    /// Setup:
+    /// - Optionally Assign a Trigger (IInteractionTrigger: Zone, Pointer, Collider, etc.)
+    /// - Optionally Assign Effects to execute (visual, audio, logic feedback)
+    /// - Optionally assign Conditions that must pass (proximity, item possession, etc.)
+    /// </summary>
     public abstract class AInteractable : MonoBehaviour
     {
+        /// <summary>Controls when this interaction becomes active (OnStart = automatic, Manual = via code)</summary>
         [SerializeField] private ActivationType activationType = ActivationType.OnStart;
+        
+        /// <summary>Delay in seconds before interaction becomes active after scene starts</summary>
         [SerializeField] private float delay = default;
+        
+        /// <summary>If true, interaction can only be used once then disables. If false, repeats indefinitely</summary>
         [SerializeField] private bool once = true;
 
+        /// <summary>The trigger that detects player actions (zone enter, click, collision, etc.)</summary>
         [SerializeField] protected AInteractionTrigger interactionTrigger;
+        
+        /// <summary>Array of effects to execute at different interaction stages (enter/interact/exit)</summary>
         [SerializeField] private AEffect[] effects;
+        
+        /// <summary>Array of conditions that must be satisfied before interaction can proceed</summary>
         [SerializeField] private ACondition[] conditions;
 
+        /// <summary>Current state of interaction (None, onEnterActive, onInteractActive)</summary>
         private CurrentState currentState = CurrentState.None;
+        
+        /// <summary>Fired when interaction is enabled and ready to use</summary>
         protected event Action onEnableAction;
+        
+        /// <summary>Fired when interaction is disabled and no longer available</summary>
         protected event Action onDisableAction;
+        
+        /// <summary>Fired when player enters interaction</summary>
         protected event Action onEnterAction;
+        
+        /// <summary>Fired when player exits interaction</summary>
         protected event Action onExitAction;
+        
+        /// <summary>Fired when player actively interacts (click, collision, etc.)</summary>
         protected event Action onInteractAction;
 
+        /// <summary>Is this interaction currently enabled and available to use?</summary>
         protected bool isEnable = false;
+        
+        /// <summary>Cached value: does this interaction have a trigger assigned?</summary>
         protected bool hasTrigger = false;
+        
+        /// <summary>Cached value: does this interaction have any conditions?</summary>
         protected bool hasConditions = false;
+        
+        /// <summary>Prevents multiple simultaneous interactions (interaction in progress)</summary>
         private bool isInteractionRunning = false;
 
-        private enum ActivationType { OnStart, Manual }
+        /// <summary>When should this interaction become active</summary>
+        private enum ActivationType { OnStart, OnEnable, Manual }
 
+        /// <summary>Current state of the interaction lifecycle</summary>
         private enum CurrentState { None, onEnterActive, onInteractActive };
 
+        /// <summary>
+        /// Checks if all conditions are currently satisfied (for any condition type).
+        /// Used to determine if interaction can proceed.
+        /// </summary>
         protected bool isConditionsReady;
+        
+        /// <summary>
+        /// Property that evaluates if all conditions are ready.
+        /// Returns true if no conditions, or if all conditions pass CheckCondition().
+        /// </summary>
         protected bool IsConditionsReady
         {
             get
             {
+                if (conditions == null || conditions.Length == 0) return true;
                 bool isReady = true;
                 for (int i = 0; i < conditions.Length; i++)
                 {
+                    if (conditions[i] == null) continue;
                     if (!conditions[i].CheckCondition()) isReady = false;
                 }
                 return isReady;
             }
         }
+        
+        /// <summary>
+        /// stock IsRequiredConditionsActives property that checks if all REQUIRED conditions are satisfied.
+        /// </summary>
         protected bool isRequiredConditionsActives;
+        
+        /// <summary>
+        /// Property that evaluates if all REQUIRED conditions are ready.
+        /// Returns true if: no conditions, all required conditions pass
+        /// if no required conditions exist return isConditionsReady.
+        /// Returns false if any required condition fails.
+        /// </summary>
         protected bool IsRequiredConditionsActives
         {
             get
             {
+                if (conditions == null || conditions.Length == 0) return true;
                 bool hasRequiredCondition = false;
                 for (int i = 0; i < conditions.Length; i++)
                 {
+                    if (conditions[i] == null) continue;
                     if (conditions[i].requiredForEffects)
                     {
                         if (!conditions[i].CheckCondition())
@@ -58,24 +133,39 @@ namespace MyUnityPackage.Interactions
                         hasRequiredCondition = true;
                     }
                 }
-                if (!hasRequiredCondition) return isConditionsReady;
+                if (!hasRequiredCondition) return IsConditionsReady;
                 return hasRequiredCondition;
             }
         }
+        
+        /// <summary>
+        /// Called by derived classes to initialize interaction-specific logic.
+        /// Subscribe to onInteractAction here to define what happens when player interacts.
+        /// </summary>
         protected abstract void Init();
 
+        /// <summary>
+        /// Initialize interaction system on scene start.
+        /// Sets up trigger listeners, condition listeners, and activates if configured.
+        /// </summary>
         protected virtual void Start()
         {
-            Disable();
-            if (activationType == ActivationType.OnStart) StartCoroutine(WaitDelay());
+            if (activationType == ActivationType.OnStart) StartCoroutine(ActiveAfterDelay());
             Init();
 
             currentState = CurrentState.None;
-            for (int i = 0; i < conditions.Length; i++)
+            
+            // Subscribe to all condition state changes
+            if (conditions != null)
             {
-                conditions[i].onConditionMet += OnConditionChanged;
+                for (int i = 0; i < conditions.Length; i++)
+                {
+                    if (conditions[i] == null) continue;
+                    conditions[i].onConditionMet += OnConditionChanged;
+                }
             }
 
+            // Subscribe to trigger events
             if (interactionTrigger != null)
             {
                 hasTrigger = true;
@@ -88,163 +178,268 @@ namespace MyUnityPackage.Interactions
                 hasTrigger = false;
             }
 
-            if (conditions.Length > 0)
+            // Cache condition status
+            if (conditions != null && conditions.Length > 0)
                 hasConditions = true;
 
             isConditionsReady = IsConditionsReady;
             isRequiredConditionsActives = IsRequiredConditionsActives;
         }
 
-        //Allow to trigger the function when a state has change
-        public void OnConditionChanged(bool isInteracting)
+        public void Onable()
+        {
+            if (activationType == ActivationType.OnEnable) StartCoroutine(ActiveAfterDelay());
+        }
+
+        /// <summary>
+        /// Cleanup when interaction is disabled.
+        /// Unsubscribe from all events to prevent memory leaks.
+        /// </summary>
+        protected virtual void OnDisable()
+        {
+            // Unsubscribe from condition changes
+            if (conditions != null)
+            {
+                for (int i = 0; i < conditions.Length; i++)
+                {
+                    if (conditions[i] == null) continue;
+                    conditions[i].onConditionMet -= OnConditionChanged;
+                }
+            }
+
+            // Unsubscribe from trigger events
+            if (interactionTrigger != null)
+            {
+                interactionTrigger.onInteract -= OnInteractTrigger;
+                interactionTrigger.onEnter -= OnEnterTrigger;
+                interactionTrigger.onExit -= OnExitTrigger;
+            }
+            isEnable = false;
+        }
+
+        /// <summary>
+        /// Called when any condition's state changes.
+        /// Determines if interaction should enter/exit/interact states based on current condition status.
+        /// 
+        /// Logic:
+        /// - If conditions become ready AND we're not interacting: Enter state
+        /// - If required conditions fail AND we're in enter state: Exit state
+        /// - If all conditions ready AND already in enter state AND no trigger: Interact state
+        /// </summary>
+        /// <param name="conditionMet">True if the condition that changed is now met, false otherwise</param>
+        public void OnConditionChanged(bool conditionMet)
         {
             isConditionsReady = IsConditionsReady;
             isRequiredConditionsActives = IsRequiredConditionsActives;
 
-            Debug.Log("OnConditionChanged : isInteracting : " + isInteracting + " currentState " + currentState + " isRequiredConditionsActives " + isRequiredConditionsActives);
 
-            if (isInteracting && currentState == CurrentState.None && isRequiredConditionsActives)
+            // If conditions became ready, enter the interaction zone
+            if (conditionMet && currentState == CurrentState.None && isRequiredConditionsActives)
             {
-                Debug.Log("OnEnter");
                 OnEnter();
             }
-            else if (!isInteracting && currentState == CurrentState.onEnterActive)
+            // If conditions failed, exit the interaction zone
+            else if (!conditionMet && currentState == CurrentState.onEnterActive)
             {
-                Debug.Log("exit");
                 OnExit();
             }
 
-            if (isInteracting && currentState == CurrentState.onEnterActive && isConditionsReady && !hasTrigger)
+            // If no trigger exists and all conditions ready, auto-interact (condition-driven interaction)
+            if (conditionMet && currentState == CurrentState.onEnterActive && isConditionsReady && !hasTrigger)
             {
-                Debug.Log("OnInteract");
                 OnInteract();
             }
-
-            Debug.Log("isConditionsReady : " + isConditionsReady);
-            Debug.Log("isRequiredConditionsActives : " + isRequiredConditionsActives);
         }
 
+        /// <summary>
+        /// Called when trigger detects interaction (click, collision, etc.).
+        /// Only executes if all conditions are satisfied.
+        /// </summary>
         private void OnInteractTrigger()
         {
-            Debug.Log("OnInteractType");
             if (isConditionsReady)
             {
-                Debug.Log("OnInteract");
                 OnInteract();
             }
         }
 
+        /// <summary>
+        /// Called when trigger detects player entering zone.
+        /// Subclasses can override to check/display unsatisfied conditions.
+        /// </summary>
         protected virtual void OnEnterTrigger()
         {
-            Debug.Log("OnEnter trigger");
-            // check condition pour afficher les manquantes
-
         }
 
+        /// <summary>
+        /// Called when trigger detects player leaving zone.
+        /// Subclasses can override for cleanup.
+        /// </summary>
         protected virtual void OnExitTrigger()
         {
-            Debug.Log("OnExit trigger");
-
         }
 
-        //Function to call when the main condition is good
+        /// <summary>
+        /// Execute the interaction when player actively interacts.
+        /// Fires all InteractEffect() on all effects, marks state as active, and invokes onInteractAction.
+        /// </summary>
         public void OnInteract()
         {
-            Debug.Log("OnInteract Interactable" + isEnable);
+
             if (!isEnable || isInteractionRunning) return;
-            Debug.Log("OnInteract isInteractionRunning" + isInteractionRunning);
+            
             isInteractionRunning = true;
-            for (int i = 0; i < effects.Length; i++)
+            
+            // Fire interact effect on all effects
+            if (effects != null)
             {
-                effects[i].OnInteract();
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    if (effects[i] == null) continue;
+                    effects[i].InteractEffect();
+                }
             }
 
             currentState = CurrentState.onInteractActive;
             onInteractAction?.Invoke();
-
         }
 
-        //Function to call when the main condition can be call
+        /// <summary>
+        /// Called when player enters interaction zone and all conditions are satisfied.
+        /// Fires EnterEffect() on all effects and marks state as enter-active.
+        /// </summary>
         public void OnEnter()
         {
             if (!isEnable)
                 return;
 
-            for (int i = 0; i < effects.Length; i++)
+            // Fire enter effect on all effects
+            if (effects != null)
             {
-                effects[i].OnEnter();
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    if (effects[i] == null) continue;
+                    effects[i].EnterEffect();
+                }
             }
+            
             currentState = CurrentState.onEnterActive;
             onEnterAction?.Invoke();
         }
 
-        //Function to call when the main condition can't be call anymore
+        /// <summary>
+        /// Called when player exits interaction zone or conditions no longer met.
+        /// Fires ExitEffect() on all effects and resets state.
+        /// </summary>
         public void OnExit()
         {
-            Debug.Log("OnExit Interactable" + isEnable);
 
             if (!isEnable) return;
-            for (int i = 0; i < effects.Length; i++)
+            
+            // Fire exit effect on all effects
+            if (effects != null)
             {
-                effects[i].OnExit();
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    if (effects[i] == null) continue;
+                    effects[i].ExitEffect();
+                }
             }
 
             currentState = CurrentState.None;
-
             onExitAction?.Invoke();
         }
+        /// <summary>
+        /// Coroutine that handles post-interaction cleanup.
+        /// Exits interaction state, and either disables (if once=true) or repeats (if once=false).
+        /// </summary>
         protected IEnumerator EndInteractionCoroutine()
         {
-            Debug.Log("EndInteraction : " + once);
             currentState = CurrentState.None;
             OnExit();
             yield return null;
+            
             if (once)
             {
+                // One-time interaction: disable after use
                 Disable();
             }
             else
             {
-                if (isConditionsReady && !hasTrigger)
-                {
-                    Debug.Log("OnInteract");
-                    OnInteract();
-                }
-                else if (isRequiredConditionsActives && hasConditions)
-                {
-                    Debug.Log("OnEnter");
-                    OnEnter();
-                }
+                // Repeating interaction: check if should auto-interact or re-enter
+                CheckIfAlreadyReady();
             }
             isInteractionRunning = false;
         }
+        
+        /// <summary>
+        /// Called by derived classes when interaction completes.
+        /// Starts the EndInteractionCoroutine to handle cleanup.
+        /// </summary>
         protected void EndInteraction()
         {
             StartCoroutine(EndInteractionCoroutine());
         }
 
+        /// <summary>
+        /// Enable this interaction: make it available to the player.
+        /// Fires ActivateEffect() on all effects.
+        /// </summary>
         public virtual void Enable()
         {
-            //Debug.Log("Active : " + pActive);
             isEnable = true;
-            for (int i = 0; i < effects.Length; i++)
+            
+            // Fire activate effect on all effects
+            if (effects != null)
             {
-                effects[i].OnEnable();
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    if (effects[i] == null) continue;
+                    effects[i].ActivateEffect();
+                }
             }
             onEnableAction?.Invoke();
+            CheckIfAlreadyReady();
+
         }
 
+        /// check if condition is already ready
+        public void CheckIfAlreadyReady()
+        {
+            if (isConditionsReady && !hasTrigger)
+            {
+                OnInteract();
+            }
+            else if (isRequiredConditionsActives && hasConditions)
+            {
+                OnEnter();
+            }
+        }
+        /// <summary>
+        /// Disable this interaction: make it unavailable to the player.
+        /// Fires DeactivateEffect() on all effects.
+        /// </summary>
         public virtual void Disable()
         {
             isEnable = false;
-            for (int i = 0; i < effects.Length; i++)
+            
+            // Fire deactivate effect on all effects
+            if (effects != null)
             {
-                effects[i].OnDisable();
+                for (int i = 0; i < effects.Length; i++)
+                {
+                    if (effects[i] == null) continue;
+                    effects[i].DeactivateEffect();
+                }
             }
             onDisableAction?.Invoke();
         }
 
-        private IEnumerator WaitDelay()
+        /// <summary>
+        /// Wait for the configured delay, then enable the interaction.
+        /// Used if activationType is set to OnStart with a delay.
+        /// </summary>
+        private IEnumerator ActiveAfterDelay()
         {
             yield return new WaitForSeconds(delay);
             Enable();

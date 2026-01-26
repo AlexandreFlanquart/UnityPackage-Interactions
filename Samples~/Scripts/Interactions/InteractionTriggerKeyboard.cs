@@ -2,7 +2,9 @@ using UnityEngine;
 using System;
 using MyUnityPackage.Interactions;
 
-public class InteractionTriggerKeyboard : AInteractionTrigger
+namespace MyUnityPackage.Interactions.Samples
+{
+    public class InteractionTriggerKeyboard : AInteractionTrigger
 {
     public override event Action onEnter;
     public override event Action onExit;
@@ -14,7 +16,7 @@ public class InteractionTriggerKeyboard : AInteractionTrigger
     }
     void OnInteract()
     {
-        Debug.Log("Interact keyboard");
         onInteract?.Invoke();
     }
+}
 }

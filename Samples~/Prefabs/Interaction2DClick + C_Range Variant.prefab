@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3983944191666100128
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.31
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.59
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214938545119349776, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1784052505294001833, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: m_Name
+      value: Interaction2DClick + C_Range Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7270455675432248447, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: interactionTrigger
+      value: 
+      objectReference: {fileID: 4222934752921135637}
+    - target: {fileID: 7270455675432248447, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: conditions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7270455675432248447, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      propertyPath: 'conditions.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2125368310085168904}
+    m_RemovedComponents:
+    - {fileID: 5055068893746377774, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4372566040581183026, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4222934752921135637}
+  m_SourcePrefab: {fileID: 100100000, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+--- !u!1 &857840654694875538 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4372566040581183026, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+  m_PrefabInstance: {fileID: 3983944191666100128}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4222934752921135637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857840654694875538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c0c23e64e633784bad80fc630b989e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2125368310085168904 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3041903465501735080, guid: a276fc81c37e31c499238e0da77b1665, type: 3}
+  m_PrefabInstance: {fileID: 3983944191666100128}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac1d3c4dac782974d9ee16ac34a7a6e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -510,7 +510,7 @@ GameObject:
   - component: {fileID: 5058632293965635996}
   - component: {fileID: 6887637818616262752}
   m_Layer: 0
-  m_Name: InteractionTemplate
+  m_Name: Interaction3DTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,7 +1,9 @@
 using UnityEngine;
 using MyUnityPackage.Interactions;
 
-public class ConditionLevel : ACondition
+namespace MyUnityPackage.Interactions.Samples
+{
+    public class ConditionLevel : ACondition
 {
     private GameManagerInteractions gameManager;
 
@@ -13,7 +15,6 @@ public class ConditionLevel : ACondition
 
     public override bool CheckCondition()
     {
-        Debug.Log("CheckCondition : " + isReady);
         return isReady;
     }
 
@@ -22,5 +23,6 @@ public class ConditionLevel : ACondition
         isReady = lvl >= 10;
         OnConditionMet(isReady);
     }
+}
 }
 
