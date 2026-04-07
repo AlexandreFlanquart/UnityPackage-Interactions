@@ -13,7 +13,7 @@ namespace MyUnityPackage.Interactions.Samples
         gameManager.OnLevelChange += OnLevelChanged;
     }
 
-    public override bool CheckCondition()
+    protected override bool EvaluateCondition()
     {
         return isReady;
     }

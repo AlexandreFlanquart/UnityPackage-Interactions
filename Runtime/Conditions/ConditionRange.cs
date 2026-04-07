@@ -23,9 +23,16 @@ namespace MyUnityPackage.Interactions
 
         void OnEnable()
         {
-            // Subscribe to range handler events
             rangeHandler.onRangeEnter += OnRangeEnter;
             rangeHandler.onRangeExit += OnRangeExit;
+
+            // Sync with current state and notify — RangeHandler may have updated while we were disabled
+            bool currentInRange = rangeHandler.InRange;
+            if (currentInRange != isReady)
+            {
+                isReady = currentInRange;
+                OnConditionMet(isReady);
+            }
         }
 
         void OnDisable()
@@ -49,10 +56,10 @@ namespace MyUnityPackage.Interactions
             OnConditionMet(isReady);
         }
 
-        /// <summary>Returns whether player is currently within range</summary>
-        public override bool CheckCondition()
+        /// <summary>Returns whether player is currently within range, read directly from RangeHandler</summary>
+        protected override bool EvaluateCondition()
         {
-            return isReady;
+            return rangeHandler != null && rangeHandler.InRange;
         }
     }
 }

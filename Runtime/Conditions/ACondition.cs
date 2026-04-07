@@ -29,11 +29,21 @@ namespace MyUnityPackage.Interactions
         public event Action<bool> onConditionMet;
         
         /// <summary>
-        /// Evaluates the current state of this condition.
-        /// Derived classes MUST override this to implement their specific condition logic.
+        /// Evaluates the condition, applying the shouldBeTrue inversion if needed.
+        /// Do NOT override this — override EvaluateCondition() instead.
         /// </summary>
-        /// <returns>True if condition is satisfied and ready, false otherwise</returns>
-        public abstract bool CheckCondition();
+        public bool CheckCondition()
+        {
+            bool result = EvaluateCondition();
+            return shouldBeTrue ? result : !result;
+        }
+
+        /// <summary>
+        /// Implement the actual condition logic here.
+        /// Return true if the condition is naturally satisfied, false otherwise.
+        /// The shouldBeTrue flag is applied automatically by CheckCondition().
+        /// </summary>
+        protected abstract bool EvaluateCondition();
 
         /// <summary>
         /// Called by derived classes when the condition state changes.

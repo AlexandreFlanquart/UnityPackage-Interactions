@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using MyUnityPackage.Toolkit;
-using Unity.Plastic.Antlr3.Runtime.Tree;
 
 namespace MyUnityPackage.Interactions
 {

@@ -75,6 +75,9 @@ namespace MyUnityPackage.Interactions
         /// <summary>Prevents multiple simultaneous interactions (interaction in progress)</summary>
         private bool isInteractionRunning = false;
 
+        /// <summary>True after Start() has run — used to guard OnEnable re-subscription</summary>
+        private bool hasInitialized = false;
+
         /// <summary>When should this interaction become active</summary>
         private enum ActivationType { OnStart, OnEnable, Manual }
 
@@ -134,7 +137,7 @@ namespace MyUnityPackage.Interactions
                     }
                 }
                 if (!hasRequiredCondition) return IsConditionsReady;
-                return hasRequiredCondition;
+                return true;
             }
         }
         
@@ -154,8 +157,59 @@ namespace MyUnityPackage.Interactions
             Init();
 
             currentState = CurrentState.None;
-            
-            // Subscribe to all condition state changes
+
+            // Cache trigger and condition presence
+            hasTrigger = interactionTrigger != null;
+            hasConditions = conditions != null && conditions.Length > 0;
+
+            isConditionsReady = IsConditionsReady;
+            isRequiredConditionsActives = IsRequiredConditionsActives;
+
+            hasInitialized = true;
+            SubscribeEvents();
+        }
+
+        /// <summary>
+        /// Re-subscribe to events and re-activate when GameObject is re-enabled.
+        /// Activates for OnStart and OnEnable types. Manual type requires explicit Enable() call.
+        /// </summary>
+        protected virtual void OnEnable()
+        {
+            if (!hasInitialized) return;
+            SubscribeEvents();
+            if (activationType != ActivationType.Manual) StartCoroutine(ActiveAfterDelay());
+        }
+
+        /// <summary>
+        /// Cleanup when interaction is disabled.
+        /// Fires exit effects if disabled mid-interaction or while player was in zone,
+        /// then unsubscribes all events to prevent memory leaks.
+        /// </summary>
+        protected virtual void OnDisable()
+        {
+            // If disabled while player was in zone or mid-interaction, fire exit effects cleanly
+            if (isEnable && currentState != CurrentState.None)
+            {
+                if (effects != null)
+                {
+                    for (int i = 0; i < effects.Length; i++)
+                    {
+                        if (effects[i] == null) continue;
+                        effects[i].ExitEffect();
+                    }
+                }
+                onExitAction?.Invoke();
+            }
+
+            currentState = CurrentState.None;
+            UnsubscribeEvents();
+            isEnable = false;
+            isInteractionRunning = false;
+        }
+
+        /// <summary>Subscribe to condition and trigger events.</summary>
+        private void SubscribeEvents()
+        {
             if (conditions != null)
             {
                 for (int i = 0; i < conditions.Length; i++)
@@ -165,39 +219,17 @@ namespace MyUnityPackage.Interactions
                 }
             }
 
-            // Subscribe to trigger events
             if (interactionTrigger != null)
             {
-                hasTrigger = true;
                 interactionTrigger.onInteract += OnInteractTrigger;
                 interactionTrigger.onEnter += OnEnterTrigger;
                 interactionTrigger.onExit += OnExitTrigger;
             }
-            else
-            {
-                hasTrigger = false;
-            }
-
-            // Cache condition status
-            if (conditions != null && conditions.Length > 0)
-                hasConditions = true;
-
-            isConditionsReady = IsConditionsReady;
-            isRequiredConditionsActives = IsRequiredConditionsActives;
         }
 
-        public void Onable()
+        /// <summary>Unsubscribe from condition and trigger events.</summary>
+        private void UnsubscribeEvents()
         {
-            if (activationType == ActivationType.OnEnable) StartCoroutine(ActiveAfterDelay());
-        }
-
-        /// <summary>
-        /// Cleanup when interaction is disabled.
-        /// Unsubscribe from all events to prevent memory leaks.
-        /// </summary>
-        protected virtual void OnDisable()
-        {
-            // Unsubscribe from condition changes
             if (conditions != null)
             {
                 for (int i = 0; i < conditions.Length; i++)
@@ -207,14 +239,12 @@ namespace MyUnityPackage.Interactions
                 }
             }
 
-            // Unsubscribe from trigger events
             if (interactionTrigger != null)
             {
                 interactionTrigger.onInteract -= OnInteractTrigger;
                 interactionTrigger.onEnter -= OnEnterTrigger;
                 interactionTrigger.onExit -= OnExitTrigger;
             }
-            isEnable = false;
         }
 
         /// <summary>
@@ -310,7 +340,7 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         public void OnEnter()
         {
-            if (!isEnable)
+            if (!isEnable || currentState == CurrentState.onEnterActive)
                 return;
 
             // Fire enter effect on all effects
@@ -358,7 +388,9 @@ namespace MyUnityPackage.Interactions
             currentState = CurrentState.None;
             OnExit();
             yield return null;
-            
+
+            isInteractionRunning = false;
+
             if (once)
             {
                 // One-time interaction: disable after use
@@ -369,7 +401,6 @@ namespace MyUnityPackage.Interactions
                 // Repeating interaction: check if should auto-interact or re-enter
                 CheckIfAlreadyReady();
             }
-            isInteractionRunning = false;
         }
         
         /// <summary>
@@ -387,8 +418,9 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         public virtual void Enable()
         {
+            if (isEnable) return;
             isEnable = true;
-            
+
             // Fire activate effect on all effects
             if (effects != null)
             {
@@ -399,8 +431,18 @@ namespace MyUnityPackage.Interactions
                 }
             }
             onEnableAction?.Invoke();
-            CheckIfAlreadyReady();
 
+            // Defer condition check to next frame so all component OnEnable() calls
+            // have completed (RangeHandler re-registers and forces a fresh distance calc)
+            StartCoroutine(CheckIfAlreadyReadyNextFrame());
+        }
+
+        private IEnumerator CheckIfAlreadyReadyNextFrame()
+        {
+            yield return null;
+            isConditionsReady = IsConditionsReady;
+            isRequiredConditionsActives = IsRequiredConditionsActives;
+            CheckIfAlreadyReady();
         }
 
         /// check if condition is already ready
@@ -421,6 +463,7 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         public virtual void Disable()
         {
+            if (!isEnable) return;
             isEnable = false;
             
             // Fire deactivate effect on all effects
@@ -437,11 +480,13 @@ namespace MyUnityPackage.Interactions
 
         /// <summary>
         /// Wait for the configured delay, then enable the interaction.
-        /// Used if activationType is set to OnStart with a delay.
+        /// If delay is 0, Enable() is called synchronously (no frame deferral)
+        /// so that trigger re-fires in the same frame find isEnable = true.
         /// </summary>
         private IEnumerator ActiveAfterDelay()
         {
-            yield return new WaitForSeconds(delay);
+            if (delay > 0)
+                yield return new WaitForSeconds(delay);
             Enable();
         }
     }

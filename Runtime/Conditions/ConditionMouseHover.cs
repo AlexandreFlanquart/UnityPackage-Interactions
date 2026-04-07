@@ -33,8 +33,18 @@ namespace MyUnityPackage.Interactions
             OnConditionMet(false);
         }
         
+        /// <summary>Reset hover state on disable — EventSystem won't fire OnPointerExit on disabled objects</summary>
+        private void OnDisable()
+        {
+            if (isReady)
+            {
+                isReady = false;
+                OnConditionMet(false);
+            }
+        }
+
         /// <summary>Returns whether mouse is currently hovering over this element</summary>
-        public override bool CheckCondition()
+        protected override bool EvaluateCondition()
         {
             return isReady;
         }

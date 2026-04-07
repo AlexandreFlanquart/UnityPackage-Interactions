@@ -112,16 +112,17 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         private void CalculateRange()
         {
-            // Skip if player is not active in scene
-            if (!player.gameObject.activeInHierarchy) return;
-            
+            // Skip if player is not assigned or not active in scene
+            if (player == null || !player.gameObject.activeInHierarchy) return;
+
             // Only recalculate if player moved or force flag is set
-            if ((player != null && currentPlayerPos != player.position) || forceCheck)
+            if (currentPlayerPos != player.position || forceCheck)
             {
                 forceCheck = false;
                 // Update all registered range handlers
-                for (int i = 0; i < rangeHandlers.Count; i++)
+                for (int i = rangeHandlers.Count - 1; i >= 0; i--)
                 {
+                    if (rangeHandlers[i] == null) { rangeHandlers.RemoveAt(i); continue; }
                     CalculateRange(rangeHandlers[i]);
                 }
             }
