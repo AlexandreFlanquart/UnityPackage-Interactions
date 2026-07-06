@@ -29,9 +29,9 @@ public class MonInteraction : AInteractable
 
 | Propriété | Description |
 |-----------|-------------|
-| **ActivationType** | `OnStart` = auto, `Manual` = via code |
+| **ActivationType** | `OnStart` = auto au démarrage, `OnEnable` = à chaque réactivation du GameObject, `Manual` = via code (`Enable()`) |
 | **Delay** | Délai avant activation (en secondes) |
-| **Once** | `true` = une seule fois, `false` = répétable |
+| **Once** | `true` = une seule fois (définitif, même après un cycle disable/enable — voir `ResetInteractionState()`), `false` = répétable |
 | **Interaction Trigger** | Référence au trigger (zone, clic, collision) |
 | **Effects** | Tableau des effets à exécuter |
 | **Conditions** | Tableau des conditions requises |
@@ -39,13 +39,19 @@ public class MonInteraction : AInteractable
 ## Méthodes Disponibles
 
 ```csharp
-Enable()           // Activer l'interaction
-Disable()          // Désactiver l'interaction
-OnEnter()          // Joueur entre dans l'interaction'
-OnExit()           // Joueur sort de l'interaction'
-OnInteract()       // Joueur interagit
-EndInteraction()   // Terminer l'interaction proprement
+Enable()                  // Activer l'interaction (ignoré si une interaction "once" a déjà été consommée)
+Disable()                 // Désactiver l'interaction (déclenche les effets Exit si en cours)
+OnEnter()                 // Joueur entre dans l'interaction
+OnExit()                  // Joueur sort de l'interaction
+OnInteract()              // Joueur interagit
+EndInteraction()          // Terminer l'interaction proprement
+ResetInteractionState()   // Réarmer une interaction "once" consommée (pooling/respawn)
 ```
+
+> **Note** : le cycle de vie est protégé — un appel effectué depuis un état invalide est
+> simplement ignoré (ex : `OnInteract()` pendant une interaction déjà en cours, `OnExit()`
+> sans entrée préalable, `OnEnter()` pendant une interaction). Pas besoin de vérifier
+> l'état avant d'appeler ces méthodes.
 
 ## Événements Disponibles
 

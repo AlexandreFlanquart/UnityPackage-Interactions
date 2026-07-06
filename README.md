@@ -7,6 +7,11 @@ With the modalirity of this package you can change different parameters like the
 ## What's New
 To see the last update of the package check [here](CHANGELOG.md) !
 
+## ⚠️ Requirements
+This package depends on **[UnityPackage-Toolkit](https://github.com/AlexandreFlanquart/UnityPackage-Toolkit)** (`com.myunitypackage.toolkit`) for its `ServiceLocator` and logger.
+**Install the Toolkit package first**, otherwise this package will not compile.
+(The dependency cannot be declared in `package.json` because Unity Package Manager does not resolve git URL dependencies automatically.)
+
 ## How to use
 
 ### Creating an Interactable Object

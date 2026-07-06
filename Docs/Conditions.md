@@ -41,6 +41,10 @@ public class InventoryCondition : ACondition
     {
         if (inventory != null)
             inventory.onInventoryChanged -= CheckInventory;
+
+        // Reset state and notify listeners so the interactable doesn't keep
+        // a stale "condition met" state while this component can't update it
+        ResetReadyState();
     }
     
     protected override bool EvaluateCondition()
@@ -66,4 +70,5 @@ public class InventoryCondition : ACondition
 ✅ Notify only when the state **actually changes**  
 ✅ Check for null references  
 ✅ Unsubscribe from events in `OnDisable()`  
-✅ Avoid expensive calculations in `CheckCondition()`
+✅ Call `ResetReadyState()` in `OnDisable()` — it resets `isReady` and notifies listeners only if the condition was met (no spurious notify)  
+✅ Avoid expensive calculations in `EvaluateCondition()`
