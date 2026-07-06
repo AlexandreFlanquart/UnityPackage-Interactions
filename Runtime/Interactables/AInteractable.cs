@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,19 +7,19 @@ namespace MyUnityPackage.Interactions
     /// <summary>
     /// Abstract base class for all interactable objects in the Interaction System.
     /// Manages the complete interaction lifecycle: activation, conditions, triggers, and effects.
-    /// 
+    ///
     /// Workflow:
     /// 1. OnStart or Manual activation: interaction becomes enabled/disabled
     /// 2. Conditions monitored: when all required conditions are met, interaction is ready
     /// 3. Trigger detected: player enters zone, clicks, or collides (depends on trigger type)
     /// 4. Interaction execute: all effects fire (enter, interact, exit) in sequence
     /// 5. Once complete: interaction can repeat or disable (depends on "once" setting)
-    /// 
+    ///
     /// Key Events:
     /// - onEnter: Player can interact (conditions met + player nearby)
     /// - onInteract: Player actively interacts (click, collision, etc.)
     /// - onExit: Player no longer can interact (left zone, condition failed)
-    /// 
+    ///
     /// Setup:
     /// - Optionally Assign a Trigger (IInteractionTrigger: Zone, Pointer, Collider, etc.)
     /// - Optionally Assign Effects to execute (visual, audio, logic feedback)
@@ -29,51 +29,67 @@ namespace MyUnityPackage.Interactions
     {
         /// <summary>Controls when this interaction becomes active (OnStart = automatic, Manual = via code)</summary>
         [SerializeField] private ActivationType activationType = ActivationType.OnStart;
-        
+
         /// <summary>Delay in seconds before interaction becomes active after scene starts</summary>
         [SerializeField] private float delay = default;
-        
+
         /// <summary>If true, interaction can only be used once then disables. If false, repeats indefinitely</summary>
         [SerializeField] private bool once = true;
 
         /// <summary>The trigger that detects player actions (zone enter, click, collision, etc.)</summary>
         [SerializeField] protected AInteractionTrigger interactionTrigger;
-        
+
         /// <summary>Array of effects to execute at different interaction stages (enter/interact/exit)</summary>
         [SerializeField] private AEffect[] effects;
-        
+
         /// <summary>Array of conditions that must be satisfied before interaction can proceed</summary>
         [SerializeField] private ACondition[] conditions;
 
-        /// <summary>Current state of interaction (None, onEnterActive, onInteractActive)</summary>
-        private CurrentState currentState = CurrentState.None;
-        
+        /// <summary>
+        /// Full interaction lifecycle. Single source of truth — replaces the previous
+        /// isEnable/currentState/isInteractionRunning flag trio, whose independent updates
+        /// were the root cause of several state-desync bugs.
+        /// </summary>
+        private enum LifecycleState
+        {
+            /// <summary>Not available to the player (initial state, after Disable(), or used up when once=true)</summary>
+            Disabled,
+            /// <summary>Enabled and idle — waiting for the player to enter / conditions to be met</summary>
+            Ready,
+            /// <summary>Player entered (zone/conditions) — EnterEffect fired, waiting for interact</summary>
+            Entered,
+            /// <summary>Interaction running — waiting for the subclass to call EndInteraction()</summary>
+            Interacting,
+            /// <summary>One-frame cooldown at the end of an interaction, before the once/repeat decision</summary>
+            WindingDown
+        }
+
+        /// <summary>Current lifecycle state. Only mutated by the public lifecycle methods below.</summary>
+        private LifecycleState state = LifecycleState.Disabled;
+
         /// <summary>Fired when interaction is enabled and ready to use</summary>
         protected event Action onEnableAction;
-        
+
         /// <summary>Fired when interaction is disabled and no longer available</summary>
         protected event Action onDisableAction;
-        
+
         /// <summary>Fired when player enters interaction</summary>
         protected event Action onEnterAction;
-        
+
         /// <summary>Fired when player exits interaction</summary>
         protected event Action onExitAction;
-        
+
         /// <summary>Fired when player actively interacts (click, collision, etc.)</summary>
         protected event Action onInteractAction;
 
         /// <summary>Is this interaction currently enabled and available to use?</summary>
-        protected bool isEnable = false;
-        
+        protected bool isEnable => state != LifecycleState.Disabled;
+
         /// <summary>Cached value: does this interaction have a trigger assigned?</summary>
         protected bool hasTrigger = false;
-        
+
         /// <summary>Cached value: does this interaction have any conditions?</summary>
         protected bool hasConditions = false;
-        
-        /// <summary>Prevents multiple simultaneous interactions (interaction in progress)</summary>
-        private bool isInteractionRunning = false;
 
         /// <summary>True once a "once" interaction has completed — prevents Enable() from re-arming it (e.g. via a GameObject disable/enable cycle)</summary>
         private bool hasCompletedOnce = false;
@@ -84,15 +100,12 @@ namespace MyUnityPackage.Interactions
         /// <summary>When should this interaction become active</summary>
         private enum ActivationType { OnStart, OnEnable, Manual }
 
-        /// <summary>Current state of the interaction lifecycle</summary>
-        private enum CurrentState { None, onEnterActive, onInteractActive };
-
         /// <summary>
         /// Checks if all conditions are currently satisfied (for any condition type).
         /// Used to determine if interaction can proceed.
         /// </summary>
         protected bool isConditionsReady;
-        
+
         /// <summary>
         /// Property that evaluates if all conditions are ready.
         /// Returns true if no conditions, or if all conditions pass CheckCondition().
@@ -111,12 +124,12 @@ namespace MyUnityPackage.Interactions
                 return isReady;
             }
         }
-        
+
         /// <summary>
         /// stock IsRequiredConditionsActives property that checks if all REQUIRED conditions are satisfied.
         /// </summary>
         protected bool isRequiredConditionsActives;
-        
+
         /// <summary>
         /// Property that evaluates if all REQUIRED conditions are ready.
         /// Returns true if: no conditions, all required conditions pass
@@ -143,7 +156,7 @@ namespace MyUnityPackage.Interactions
                 return true;
             }
         }
-        
+
         /// <summary>
         /// Called by derived classes to initialize interaction-specific logic.
         /// Subscribe to onInteractAction here to define what happens when player interacts.
@@ -158,7 +171,7 @@ namespace MyUnityPackage.Interactions
         {
             Init();
 
-            currentState = CurrentState.None;
+            state = LifecycleState.Disabled;
 
             // Cache trigger and condition presence
             hasTrigger = interactionTrigger != null;
@@ -191,27 +204,20 @@ namespace MyUnityPackage.Interactions
         /// Cleanup when interaction is disabled.
         /// Fires exit effects if disabled mid-interaction or while player was in zone,
         /// then unsubscribes all events to prevent memory leaks.
+        /// Note: intentionally does NOT fire DeactivateEffect/onDisableAction — that pair
+        /// belongs to the explicit Disable() API, not the Unity lifecycle.
         /// </summary>
         protected virtual void OnDisable()
         {
             // If disabled while player was in zone or mid-interaction, fire exit effects cleanly
-            if (isEnable && currentState != CurrentState.None)
+            if (state == LifecycleState.Entered || state == LifecycleState.Interacting)
             {
-                if (effects != null)
-                {
-                    for (int i = 0; i < effects.Length; i++)
-                    {
-                        if (effects[i] == null) continue;
-                        effects[i].ExitEffect();
-                    }
-                }
+                FireEffects(e => e.ExitEffect());
                 onExitAction?.Invoke();
             }
 
-            currentState = CurrentState.None;
+            state = LifecycleState.Disabled;
             UnsubscribeEvents();
-            isEnable = false;
-            isInteractionRunning = false;
         }
 
         /// <summary>Subscribe to condition and trigger events.</summary>
@@ -257,9 +263,9 @@ namespace MyUnityPackage.Interactions
         /// <summary>
         /// Called when any condition's state changes.
         /// Determines if interaction should enter/exit/interact states based on current condition status.
-        /// 
+        ///
         /// Logic:
-        /// - If conditions become ready AND we're not interacting: Enter state
+        /// - If conditions become ready AND we're idle: Enter state
         /// - If required conditions fail AND we're in enter state: Exit state
         /// - If all conditions ready AND already in enter state AND no trigger: Interact state
         /// </summary>
@@ -269,20 +275,19 @@ namespace MyUnityPackage.Interactions
             isConditionsReady = IsConditionsReady;
             isRequiredConditionsActives = IsRequiredConditionsActives;
 
-
             // If conditions became ready, enter the interaction zone
-            if (conditionMet && currentState == CurrentState.None && isRequiredConditionsActives)
+            if (conditionMet && state == LifecycleState.Ready && isRequiredConditionsActives)
             {
                 OnEnter();
             }
             // If conditions failed, exit the interaction zone
-            else if (!conditionMet && currentState == CurrentState.onEnterActive)
+            else if (!conditionMet && state == LifecycleState.Entered)
             {
                 OnExit();
             }
 
             // If no trigger exists and all conditions ready, auto-interact (condition-driven interaction)
-            if (conditionMet && currentState == CurrentState.onEnterActive && isConditionsReady && !hasTrigger)
+            if (conditionMet && state == LifecycleState.Entered && isConditionsReady && !hasTrigger)
             {
                 OnInteract();
             }
@@ -318,116 +323,97 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         protected virtual void OnExitTrigger()
         {
-            if (currentState == CurrentState.onEnterActive) OnExit();
+            if (state == LifecycleState.Entered) OnExit();
         }
 
         /// <summary>
         /// Execute the interaction when player actively interacts.
         /// Fires all InteractEffect() on all effects, marks state as active, and invokes onInteractAction.
+        /// Ignored unless the interaction is Ready or Entered with all conditions satisfied.
         /// </summary>
         public void OnInteract()
         {
+            if (state != LifecycleState.Ready && state != LifecycleState.Entered) return;
+            if (!isConditionsReady) return;
 
-            if (!isEnable || isInteractionRunning || !isConditionsReady) return;
+            // State first: acts as the re-entrancy lock for the whole method.
+            state = LifecycleState.Interacting;
 
-            isInteractionRunning = true;
-
-            // Mark "once" interactions as used up immediately, not after EndInteractionCoroutine's
-            // yield — a synchronous onExitAction/effect handler could deactivate this GameObject
-            // during that single-frame gap (Unity kills the coroutine on disable), which would
-            // otherwise leave hasCompletedOnce unset and let the interaction re-arm.
+            // Mark "once" interactions as used up immediately — a synchronous handler could
+            // deactivate this GameObject before EndInteractionCoroutine finishes (Unity kills
+            // the coroutine on deactivation), which would otherwise let the interaction re-arm.
             if (once) hasCompletedOnce = true;
 
-            // Fire interact effect on all effects
-            if (effects != null)
-            {
-                for (int i = 0; i < effects.Length; i++)
-                {
-                    if (effects[i] == null) continue;
-                    effects[i].InteractEffect();
-                }
-            }
+            FireEffects(e => e.InteractEffect());
 
-            // An effect may have reentrantly called Disable() (e.g. EffectUnityEvent wired to it):
-            // in that case don't resurrect the state Disable() just reset, and don't run the action.
-            if (!isEnable) return;
+            // An effect may have reentrantly changed the state (e.g. EffectUnityEvent wired
+            // to Disable()) — don't resurrect it, and don't run the action.
+            if (state != LifecycleState.Interacting) return;
 
-            currentState = CurrentState.onInteractActive;
             onInteractAction?.Invoke();
         }
 
         /// <summary>
         /// Called when player enters interaction zone and all conditions are satisfied.
-        /// Fires EnterEffect() on all effects and marks state as enter-active.
+        /// Fires EnterEffect() on all effects and marks state as entered.
+        /// Ignored unless the interaction is Ready (blocks re-entry mid-interaction and
+        /// during the end-of-interaction wind-down frame).
         /// </summary>
         public void OnEnter()
         {
-            // Block re-entry from ANY non-None state, not just onEnterActive: OnEnterTrigger()
-            // can now call this directly, and a re-fired trigger enter event (e.g. player
-            // re-entering a zone, or a multi-collider setup) while currentState == onInteractActive
-            // must not stomp a still-running interaction back to onEnterActive.
-            // isInteractionRunning also blocks the one-frame window inside EndInteractionCoroutine
-            // where currentState is already None but the interaction hasn't fully wrapped up yet
-            // (CheckIfAlreadyReady handles re-entry after that).
-            if (!isEnable || isInteractionRunning || currentState != CurrentState.None)
-                return;
+            if (state != LifecycleState.Ready) return;
 
-            // Fire enter effect on all effects
-            if (effects != null)
-            {
-                for (int i = 0; i < effects.Length; i++)
-                {
-                    if (effects[i] == null) continue;
-                    effects[i].EnterEffect();
-                }
-            }
+            state = LifecycleState.Entered;
+            FireEffects(e => e.EnterEffect());
 
-            // An effect may have reentrantly called Disable() — don't resurrect the reset state.
-            if (!isEnable) return;
+            // An effect may have reentrantly changed the state — don't resurrect it.
+            if (state != LifecycleState.Entered) return;
 
-            currentState = CurrentState.onEnterActive;
             onEnterAction?.Invoke();
         }
 
         /// <summary>
         /// Called when player exits interaction zone or conditions no longer met.
-        /// Fires ExitEffect() on all effects and resets state.
+        /// Fires ExitEffect() on all effects and returns to Ready.
+        /// Ignored unless the interaction is Entered or Interacting (no phantom exits).
         /// </summary>
         public void OnExit()
         {
+            if (state != LifecycleState.Entered && state != LifecycleState.Interacting) return;
 
-            if (!isEnable || currentState == CurrentState.None) return;
+            state = LifecycleState.Ready;
+            FireEffects(e => e.ExitEffect());
 
-            // Fire exit effect on all effects
-            if (effects != null)
-            {
-                for (int i = 0; i < effects.Length; i++)
-                {
-                    if (effects[i] == null) continue;
-                    effects[i].ExitEffect();
-                }
-            }
+            // An effect may have reentrantly changed the state — don't resurrect it.
+            if (state != LifecycleState.Ready) return;
 
-            currentState = CurrentState.None;
             onExitAction?.Invoke();
         }
+
         /// <summary>
         /// Coroutine that handles post-interaction cleanup.
-        /// Exits interaction state, and either disables (if once=true) or repeats (if once=false).
+        /// Exits interaction state, holds a one-frame wind-down (so trigger/condition events
+        /// can't re-enter before the once/repeat decision), then either disables (once=true)
+        /// or re-arms (once=false). No-ops if no interaction is actually running.
         /// </summary>
         protected IEnumerator EndInteractionCoroutine()
         {
-            // OnExit() reads currentState (set to onInteractActive by OnInteract()) itself,
-            // and resets it to None internally — do not reset it here beforehand.
-            OnExit();
-            yield return null;
+            if (state != LifecycleState.Interacting) yield break;
 
-            isInteractionRunning = false;
+            OnExit(); // Interacting -> Ready, fires ExitEffect + onExitAction
+
+            // Hold the wind-down state for one frame — blocks OnEnter/OnInteract until the
+            // once/repeat decision below (a handler of onExitAction may already have changed
+            // the state, e.g. a reentrant Disable(): respect it).
+            if (state == LifecycleState.Ready) state = LifecycleState.WindingDown;
+            yield return null;
+            if (state == LifecycleState.WindingDown) state = LifecycleState.Ready;
+
+            if (state == LifecycleState.Disabled) yield break; // externally disabled meanwhile
 
             if (once)
             {
-                // One-time interaction: disable after use.
-                // hasCompletedOnce was already set in OnInteract() (see comment there).
+                // One-time interaction: disable after use (hasCompletedOnce was set in OnInteract())
                 Disable();
             }
             else
@@ -436,7 +422,7 @@ namespace MyUnityPackage.Interactions
                 CheckIfAlreadyReady();
             }
         }
-        
+
         /// <summary>
         /// Called by derived classes when interaction completes.
         /// Starts the EndInteractionCoroutine to handle cleanup.
@@ -449,22 +435,20 @@ namespace MyUnityPackage.Interactions
         /// <summary>
         /// Enable this interaction: make it available to the player.
         /// Fires ActivateEffect() on all effects.
+        /// Ignored if already enabled, or if a "once" interaction has been used up
+        /// (call ResetInteractionState() first to re-arm it).
         /// </summary>
         public virtual void Enable()
         {
             if (once && hasCompletedOnce) return;
-            if (isEnable) return;
-            isEnable = true;
+            if (state != LifecycleState.Disabled) return;
 
-            // Fire activate effect on all effects
-            if (effects != null)
-            {
-                for (int i = 0; i < effects.Length; i++)
-                {
-                    if (effects[i] == null) continue;
-                    effects[i].ActivateEffect();
-                }
-            }
+            state = LifecycleState.Ready;
+            FireEffects(e => e.ActivateEffect());
+
+            // An effect may have reentrantly changed the state — don't resurrect it.
+            if (state != LifecycleState.Ready) return;
+
             onEnableAction?.Invoke();
 
             // Defer condition check to next frame so all component OnEnable() calls
@@ -492,39 +476,25 @@ namespace MyUnityPackage.Interactions
                 OnEnter();
             }
         }
+
         /// <summary>
         /// Disable this interaction: make it unavailable to the player.
-        /// Fires DeactivateEffect() on all effects.
+        /// Fires exit effects first if currently entered/mid-interaction (mirrors OnDisable()),
+        /// then DeactivateEffect() on all effects. Safe to call from any state.
         /// </summary>
         public virtual void Disable()
         {
-            // If disabling while entered or mid-interaction, fire exit effects first so
-            // visuals/UI tied to EnterEffect are cleanly turned off (mirrors OnDisable()).
-            // No-ops when currentState is already None thanks to OnExit()'s guard.
-            if (isEnable && currentState != CurrentState.None)
+            // Fire exit effects first if disabling while entered/mid-interaction,
+            // so visuals/UI tied to EnterEffect are cleanly turned off.
+            if (state == LifecycleState.Entered || state == LifecycleState.Interacting)
             {
                 OnExit();
             }
 
-            // Always reset state, even if already disabled — otherwise an external Disable()
-            // call mid-interaction would leave currentState/isInteractionRunning permanently
-            // stuck (OnExit()'s own reset is skipped once isEnable is false, and
-            // EndInteractionCoroutine may never run if the subclass flow was cut short).
-            currentState = CurrentState.None;
-            isInteractionRunning = false;
+            if (state == LifecycleState.Disabled) return;
+            state = LifecycleState.Disabled;
 
-            if (!isEnable) return;
-            isEnable = false;
-
-            // Fire deactivate effect on all effects
-            if (effects != null)
-            {
-                for (int i = 0; i < effects.Length; i++)
-                {
-                    if (effects[i] == null) continue;
-                    effects[i].DeactivateEffect();
-                }
-            }
+            FireEffects(e => e.DeactivateEffect());
             onDisableAction?.Invoke();
         }
 
@@ -541,13 +511,24 @@ namespace MyUnityPackage.Interactions
         /// <summary>
         /// Wait for the configured delay, then enable the interaction.
         /// If delay is 0, Enable() is called synchronously (no frame deferral)
-        /// so that trigger re-fires in the same frame find isEnable = true.
+        /// so that trigger re-fires in the same frame find the interaction enabled.
         /// </summary>
         private IEnumerator ActiveAfterDelay()
         {
             if (delay > 0)
                 yield return new WaitForSeconds(delay);
             Enable();
+        }
+
+        /// <summary>Invokes the given effect method on every assigned (non-null) effect.</summary>
+        private void FireEffects(Action<AEffect> fire)
+        {
+            if (effects == null) return;
+            for (int i = 0; i < effects.Length; i++)
+            {
+                if (effects[i] == null) continue;
+                fire(effects[i]);
+            }
         }
     }
 }
