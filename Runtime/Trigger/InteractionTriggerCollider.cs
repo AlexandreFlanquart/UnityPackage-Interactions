@@ -38,20 +38,16 @@ namespace MyUnityPackage.Interactions
         /// <summary>Called by physics when this collider collides with another collider</summary>
         public void OnCollisionEnter(Collision col)
         {
-            // Check if colliding object is on the correct layer
-            if (layerMask != (layerMask | (1 << col.gameObject.layer)))
-                return;
+            if (!IsInLayerMask(col.gameObject, layerMask)) return;
 
             onEnter?.Invoke();
             onInteract?.Invoke();
         }
-        
+
         /// <summary>Called by physics when collision with another collider stops</summary>
         private void OnCollisionExit(Collision col)
         {
-            // Check if colliding object is on the correct layer
-            if (layerMask != (layerMask | (1 << col.gameObject.layer)))
-                return;
+            if (!IsInLayerMask(col.gameObject, layerMask)) return;
 
             onExit?.Invoke();
         }

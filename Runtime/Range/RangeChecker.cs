@@ -71,10 +71,13 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         private IEnumerator Calculating()
         {
+            // Cache the wait: allocating a new WaitForSeconds every tick for the whole
+            // scene lifetime is avoidable GC pressure.
+            var wait = new WaitForSeconds(checkFrequency);
             while (true)
             {
                 CalculateRange();
-                yield return new WaitForSeconds(checkFrequency);
+                yield return wait;
             }
         }
 

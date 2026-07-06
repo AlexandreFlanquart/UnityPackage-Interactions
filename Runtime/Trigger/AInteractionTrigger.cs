@@ -21,12 +21,18 @@ namespace MyUnityPackage.Interactions
     {
         /// <summary>Invoked when player enters trigger area or becomes eligible for interaction</summary>
         public abstract event Action onEnter;
-        
+
         /// <summary>Invoked when player exits trigger area or is no longer eligible for interaction</summary>
         public abstract event Action onExit;
-        
+
         /// <summary>Invoked when player actively interacts with the object (click, collision, etc.)</summary>
         public abstract event Action onInteract;
+
+        /// <summary>Returns true if the GameObject's layer is included in the given mask. Shared filter for physics-based triggers.</summary>
+        protected static bool IsInLayerMask(GameObject go, LayerMask mask)
+        {
+            return (mask.value & (1 << go.layer)) != 0;
+        }
     }
 }
 

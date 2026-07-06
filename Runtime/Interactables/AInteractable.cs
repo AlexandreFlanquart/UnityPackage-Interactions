@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using MyUnityPackage.Toolkit;
 
 namespace MyUnityPackage.Interactions
 {
@@ -96,6 +97,12 @@ namespace MyUnityPackage.Interactions
 
         /// <summary>True after Start() has run — used to guard OnEnable re-subscription</summary>
         private bool hasInitialized = false;
+
+        /// <summary>Time.time when the current interaction started — used to diagnose interactions stuck because EndInteraction() was never called</summary>
+        private float interactionStartTime;
+
+        /// <summary>How long an interaction may run before a blocked re-interact logs a "stuck?" warning</summary>
+        private const float StuckInteractionWarningDelay = 30f;
 
         /// <summary>When should this interaction become active</summary>
         private enum ActivationType { OnStart, OnEnable, Manual }
@@ -333,11 +340,20 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         public void OnInteract()
         {
+            // Diagnose soft-locks: if a new interact is blocked because the previous
+            // interaction never ended, the subclass most likely forgot EndInteraction().
+            if (state == LifecycleState.Interacting)
+            {
+                if (Time.time - interactionStartTime > StuckInteractionWarningDelay)
+                    MUPLogger.Warning($"AInteractable '{gameObject.name}': interaction has been running for over {StuckInteractionWarningDelay}s — did the subclass forget to call EndInteraction()?", this);
+                return;
+            }
             if (state != LifecycleState.Ready && state != LifecycleState.Entered) return;
             if (!isConditionsReady) return;
 
             // State first: acts as the re-entrancy lock for the whole method.
             state = LifecycleState.Interacting;
+            interactionStartTime = Time.time;
 
             // Mark "once" interactions as used up immediately — a synchronous handler could
             // deactivate this GameObject before EndInteractionCoroutine finishes (Unity kills

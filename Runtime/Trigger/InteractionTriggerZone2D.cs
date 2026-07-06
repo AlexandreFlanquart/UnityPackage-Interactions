@@ -40,8 +40,7 @@ namespace MyUnityPackage.Interactions
         /// <summary>Called by 2D physics when an object enters this trigger zone</summary>
         void OnTriggerEnter2D(Collider2D other)
         {
-            // Check if entering object is on the correct layer
-            if (layerMask != (layerMask | (1 << other.gameObject.layer))) return;
+            if (!IsInLayerMask(other.gameObject, layerMask)) return;
             onEnter?.Invoke();
             onInteract?.Invoke();
         }
@@ -49,8 +48,7 @@ namespace MyUnityPackage.Interactions
         /// <summary>Called by 2D physics when an object exits this trigger zone</summary>
         void OnTriggerExit2D(Collider2D other)
         {
-            // Check if exiting object is on the correct layer
-            if (layerMask != (layerMask | (1 << other.gameObject.layer))) return;
+            if (!IsInLayerMask(other.gameObject, layerMask)) return;
             onExit?.Invoke();
         }
     }
