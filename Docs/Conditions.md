@@ -43,7 +43,7 @@ public class InventoryCondition : ACondition
             inventory.onInventoryChanged -= CheckInventory;
     }
     
-    public override bool CheckCondition()
+    protected override bool EvaluateCondition()
     {
         if (inventory == null) return false;
         return inventory.HasObject(objectName, requiredQuantity);

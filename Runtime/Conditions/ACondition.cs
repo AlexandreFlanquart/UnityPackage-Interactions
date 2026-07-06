@@ -17,7 +17,7 @@ namespace MyUnityPackage.Interactions
     public abstract class ACondition : MonoBehaviour
     {
         /// <summary>Determines if this condition should evaluate to true or false (inverts the check if false). Useful for "NOT" logic</summary>
-        protected bool shouldBeTrue = true;
+        [SerializeField] protected bool shouldBeTrue = true;
         
         /// <summary>If true, this condition is mandatory for effects to execute. If false, it only blocks interaction but not effect</summary>
         public bool requiredForEffects;
@@ -53,6 +53,21 @@ namespace MyUnityPackage.Interactions
         protected virtual void OnConditionMet(bool conditionMet)
         {
             onConditionMet?.Invoke(conditionMet);
+        }
+
+        /// <summary>
+        /// Resets isReady to false and notifies listeners, but only if it was previously true
+        /// (avoids a spurious notify). Call this from OnDisable() in derived classes that track
+        /// an external enter/exit state (proximity, hover, etc.) so listeners aren't left with a
+        /// stale "condition met" state once this condition stops being able to update itself.
+        /// </summary>
+        protected void ResetReadyState()
+        {
+            if (isReady)
+            {
+                isReady = false;
+                OnConditionMet(false);
+            }
         }
     }
 }

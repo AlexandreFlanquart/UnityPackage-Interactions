@@ -115,14 +115,16 @@ namespace MyUnityPackage.Interactions
             // Skip if player is not assigned or not active in scene
             if (player == null || !player.gameObject.activeInHierarchy) return;
 
-            // Only recalculate if player moved or force flag is set
-            if (currentPlayerPos != player.position || forceCheck)
+            // Recalculate every handler if the player moved or force flag is set;
+            // moving-target handlers (e.g. patrolling NPCs) are recalculated regardless.
+            bool shouldForceAll = currentPlayerPos != player.position || forceCheck;
+            forceCheck = false;
+
+            for (int i = rangeHandlers.Count - 1; i >= 0; i--)
             {
-                forceCheck = false;
-                // Update all registered range handlers
-                for (int i = rangeHandlers.Count - 1; i >= 0; i--)
+                if (rangeHandlers[i] == null) { rangeHandlers.RemoveAt(i); continue; }
+                if (shouldForceAll || rangeHandlers[i].IsMovingTarget)
                 {
-                    if (rangeHandlers[i] == null) { rangeHandlers.RemoveAt(i); continue; }
                     CalculateRange(rangeHandlers[i]);
                 }
             }
@@ -135,6 +137,12 @@ namespace MyUnityPackage.Interactions
         /// <param name="pRangeHandler">The RangeHandler to calculate distance for</param>
         public void CalculateRange(RangeHandler pRangeHandler)
         {
+            if (player == null)
+            {
+                MUPLogger.Warning($"RangeChecker: no player assigned — cannot calculate range for '{pRangeHandler.gameObject.name}'.", this);
+                return;
+            }
+
             // Cache current player position
             currentPlayerPos = player.position;
             

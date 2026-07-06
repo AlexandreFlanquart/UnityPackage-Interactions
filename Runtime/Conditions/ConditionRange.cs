@@ -1,4 +1,5 @@
 using UnityEngine;
+using MyUnityPackage.Toolkit;
 
 namespace MyUnityPackage.Interactions
 {
@@ -23,6 +24,12 @@ namespace MyUnityPackage.Interactions
 
         void OnEnable()
         {
+            if (rangeHandler == null)
+            {
+                MUPLogger.Warning($"ConditionRange on '{gameObject.name}': no RangeHandler assigned — condition will never be met.", this);
+                return;
+            }
+
             rangeHandler.onRangeEnter += OnRangeEnter;
             rangeHandler.onRangeExit += OnRangeExit;
 
@@ -37,9 +44,15 @@ namespace MyUnityPackage.Interactions
 
         void OnDisable()
         {
+            if (rangeHandler == null) return;
+
             // Unsubscribe from range handler events
             rangeHandler.onRangeEnter -= OnRangeEnter;
             rangeHandler.onRangeExit -= OnRangeExit;
+
+            // Reset state on disable — the RangeHandler's own onRangeExit won't reach us anymore
+            // once unsubscribed above, so we notify listeners ourselves (mirrors ConditionMouseHover).
+            ResetReadyState();
         }
 
         /// <summary>Called when player enters the interaction range</summary>

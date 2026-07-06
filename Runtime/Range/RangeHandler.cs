@@ -35,6 +35,9 @@ namespace MyUnityPackage.Interactions
         /// <summary>Maximum distance for player to be considered "in range" (in units)</summary>
         [SerializeField] private float maxDistance;
 
+        /// <summary>If true, this handler's distance is recalculated every check even when the player hasn't moved (for moving targets, e.g. patrolling NPCs)</summary>
+        [SerializeField] private bool isMovingTarget = false;
+
         /// <summary>Fired when player enters the interaction range</summary>
         public event Action onRangeEnter;
         
@@ -56,12 +59,20 @@ namespace MyUnityPackage.Interactions
         /// <summary>Returns whether player is currently in range</summary>
         public bool InRange { get => inRange; }
 
+        /// <summary>Returns whether this handler's target moves, requiring recalculation even when the player is stationary</summary>
+        public bool IsMovingTarget { get => isMovingTarget; }
+
         private RangeChecker rangeChecker;
 
         /// <summary>Initialize: register automatically if set to Auto mode</summary>
         void Start()
         {
             rangeChecker = ServiceLocator.GetService<RangeChecker>();
+            if (rangeChecker == null)
+            {
+                MUPLogger.Warning($"RangeHandler on '{gameObject.name}': no RangeChecker found in scene.", this);
+                return;
+            }
 
             if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto)
             {
@@ -83,7 +94,11 @@ namespace MyUnityPackage.Interactions
         /// <summary>Unregister when disabled to stop receiving distance checks</summary>
         void OnDisable()
         {
-            if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto)
+            // Notify listeners we're no longer in range, regardless of registration mode —
+            // a Manual handler being disabled still needs to tell ConditionRange/effects it left range.
+            SetInRange(false);
+
+            if (rangeCheckerRegisterType == RangeCheckerRegisterType.Auto && rangeChecker != null)
             {
                 UnregisterFromRangeChecker();
             }
@@ -104,6 +119,11 @@ namespace MyUnityPackage.Interactions
         /// <summary>Force RangeChecker to immediately calculate distance (useful for initialization)</summary>
         public void ForceCalculateRange()
         {
+            if (rangeChecker == null)
+            {
+                MUPLogger.Warning($"RangeHandler on '{gameObject.name}': ForceCalculateRange() called before RangeChecker is available.", this);
+                return;
+            }
             rangeChecker.CalculateRange(this);
         }
 

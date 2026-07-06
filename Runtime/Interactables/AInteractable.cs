@@ -75,6 +75,9 @@ namespace MyUnityPackage.Interactions
         /// <summary>Prevents multiple simultaneous interactions (interaction in progress)</summary>
         private bool isInteractionRunning = false;
 
+        /// <summary>True once a "once" interaction has completed — prevents Enable() from re-arming it (e.g. via a GameObject disable/enable cycle)</summary>
+        private bool hasCompletedOnce = false;
+
         /// <summary>True after Start() has run — used to guard OnEnable re-subscription</summary>
         private bool hasInitialized = false;
 
@@ -153,7 +156,6 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         protected virtual void Start()
         {
-            if (activationType == ActivationType.OnStart) StartCoroutine(ActiveAfterDelay());
             Init();
 
             currentState = CurrentState.None;
@@ -167,6 +169,11 @@ namespace MyUnityPackage.Interactions
 
             hasInitialized = true;
             SubscribeEvents();
+
+            // Activation happens last: Enable() can run synchronously (delay == 0), so
+            // everything it may rely on (Init()'s subscriptions, SubscribeEvents()) must
+            // already be in place before it fires.
+            if (activationType == ActivationType.OnStart) StartCoroutine(ActiveAfterDelay());
         }
 
         /// <summary>
@@ -295,18 +302,23 @@ namespace MyUnityPackage.Interactions
 
         /// <summary>
         /// Called when trigger detects player entering zone.
-        /// Subclasses can override to check/display unsatisfied conditions.
+        /// Fires OnEnter() (gated by required conditions, same as the condition-driven path)
+        /// so a trigger-only interactable (no Condition assigned) still gets EnterEffect().
+        /// Subclasses can override to add extra behavior (e.g. display unsatisfied conditions).
         /// </summary>
         protected virtual void OnEnterTrigger()
         {
+            if (isRequiredConditionsActives) OnEnter();
         }
 
         /// <summary>
         /// Called when trigger detects player leaving zone.
-        /// Subclasses can override for cleanup.
+        /// Fires OnExit() only if currently in the entered state, mirroring the condition-driven path.
+        /// Subclasses can override for extra cleanup.
         /// </summary>
         protected virtual void OnExitTrigger()
         {
+            if (currentState == CurrentState.onEnterActive) OnExit();
         }
 
         /// <summary>
@@ -316,10 +328,16 @@ namespace MyUnityPackage.Interactions
         public void OnInteract()
         {
 
-            if (!isEnable || isInteractionRunning) return;
-            
+            if (!isEnable || isInteractionRunning || !isConditionsReady) return;
+
             isInteractionRunning = true;
-            
+
+            // Mark "once" interactions as used up immediately, not after EndInteractionCoroutine's
+            // yield — a synchronous onExitAction/effect handler could deactivate this GameObject
+            // during that single-frame gap (Unity kills the coroutine on disable), which would
+            // otherwise leave hasCompletedOnce unset and let the interaction re-arm.
+            if (once) hasCompletedOnce = true;
+
             // Fire interact effect on all effects
             if (effects != null)
             {
@@ -329,6 +347,10 @@ namespace MyUnityPackage.Interactions
                     effects[i].InteractEffect();
                 }
             }
+
+            // An effect may have reentrantly called Disable() (e.g. EffectUnityEvent wired to it):
+            // in that case don't resurrect the state Disable() just reset, and don't run the action.
+            if (!isEnable) return;
 
             currentState = CurrentState.onInteractActive;
             onInteractAction?.Invoke();
@@ -340,7 +362,14 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         public void OnEnter()
         {
-            if (!isEnable || currentState == CurrentState.onEnterActive)
+            // Block re-entry from ANY non-None state, not just onEnterActive: OnEnterTrigger()
+            // can now call this directly, and a re-fired trigger enter event (e.g. player
+            // re-entering a zone, or a multi-collider setup) while currentState == onInteractActive
+            // must not stomp a still-running interaction back to onEnterActive.
+            // isInteractionRunning also blocks the one-frame window inside EndInteractionCoroutine
+            // where currentState is already None but the interaction hasn't fully wrapped up yet
+            // (CheckIfAlreadyReady handles re-entry after that).
+            if (!isEnable || isInteractionRunning || currentState != CurrentState.None)
                 return;
 
             // Fire enter effect on all effects
@@ -352,7 +381,10 @@ namespace MyUnityPackage.Interactions
                     effects[i].EnterEffect();
                 }
             }
-            
+
+            // An effect may have reentrantly called Disable() — don't resurrect the reset state.
+            if (!isEnable) return;
+
             currentState = CurrentState.onEnterActive;
             onEnterAction?.Invoke();
         }
@@ -364,8 +396,8 @@ namespace MyUnityPackage.Interactions
         public void OnExit()
         {
 
-            if (!isEnable) return;
-            
+            if (!isEnable || currentState == CurrentState.None) return;
+
             // Fire exit effect on all effects
             if (effects != null)
             {
@@ -385,7 +417,8 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         protected IEnumerator EndInteractionCoroutine()
         {
-            currentState = CurrentState.None;
+            // OnExit() reads currentState (set to onInteractActive by OnInteract()) itself,
+            // and resets it to None internally — do not reset it here beforehand.
             OnExit();
             yield return null;
 
@@ -393,7 +426,8 @@ namespace MyUnityPackage.Interactions
 
             if (once)
             {
-                // One-time interaction: disable after use
+                // One-time interaction: disable after use.
+                // hasCompletedOnce was already set in OnInteract() (see comment there).
                 Disable();
             }
             else
@@ -418,6 +452,7 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         public virtual void Enable()
         {
+            if (once && hasCompletedOnce) return;
             if (isEnable) return;
             isEnable = true;
 
@@ -463,9 +498,24 @@ namespace MyUnityPackage.Interactions
         /// </summary>
         public virtual void Disable()
         {
+            // If disabling while entered or mid-interaction, fire exit effects first so
+            // visuals/UI tied to EnterEffect are cleanly turned off (mirrors OnDisable()).
+            // No-ops when currentState is already None thanks to OnExit()'s guard.
+            if (isEnable && currentState != CurrentState.None)
+            {
+                OnExit();
+            }
+
+            // Always reset state, even if already disabled — otherwise an external Disable()
+            // call mid-interaction would leave currentState/isInteractionRunning permanently
+            // stuck (OnExit()'s own reset is skipped once isEnable is false, and
+            // EndInteractionCoroutine may never run if the subclass flow was cut short).
+            currentState = CurrentState.None;
+            isInteractionRunning = false;
+
             if (!isEnable) return;
             isEnable = false;
-            
+
             // Fire deactivate effect on all effects
             if (effects != null)
             {
@@ -476,6 +526,16 @@ namespace MyUnityPackage.Interactions
                 }
             }
             onDisableAction?.Invoke();
+        }
+
+        /// <summary>
+        /// Clears the "used up" state of a "once" interaction, allowing it to be enabled again.
+        /// Call this only while the interaction is at rest (already disabled) — e.g. before
+        /// reactivating a pooled/respawned interactable.
+        /// </summary>
+        public virtual void ResetInteractionState()
+        {
+            hasCompletedOnce = false;
         }
 
         /// <summary>
