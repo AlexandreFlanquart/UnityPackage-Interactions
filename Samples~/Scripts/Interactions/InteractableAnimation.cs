@@ -21,11 +21,15 @@ namespace MyUnityPackage.Interactions.Samples
         //public float animationTime = 1f;
         protected override void Start()
         {
+            // Capture the Inspector-authored label templates BEFORE base.Start():
+            // with delay = 0, base.Start() fires Enable() -> OnStartEnable() ->
+            // UpdateTextConditions() synchronously, which appends to these strings.
+            allConditionString = allConditionsText.text;
+            requiredConditionString = requiredConditionsText.text;
+
             base.Start();
             gameManager = GameManagerInteractions.GetInstance();
             //triggerText.text = "Trigger => " + interactionTrigger.GetType().Name;
-            allConditionString = allConditionsText.text;
-            requiredConditionString = requiredConditionsText.text;
             UpdateTextConditions();
         }
 

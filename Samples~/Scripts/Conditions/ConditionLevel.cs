@@ -13,6 +13,24 @@ namespace MyUnityPackage.Interactions.Samples
         gameManager.OnLevelChange += OnLevelChanged;
     }
 
+    void OnEnable()
+    {
+        // Before Start() the manager isn't cached yet — Start() handles the first subscription
+        if (gameManager == null) return;
+
+        gameManager.OnLevelChange += OnLevelChanged;
+        // Re-sync: the level may have changed while we were disabled
+        OnLevelChanged(gameManager.GetLevel());
+    }
+
+    void OnDisable()
+    {
+        if (gameManager == null) return;
+
+        gameManager.OnLevelChange -= OnLevelChanged;
+        ResetReadyState();
+    }
+
     protected override bool EvaluateCondition()
     {
         return isReady;
